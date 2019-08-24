@@ -103,12 +103,12 @@ PTBR = PTBR - 20;
 
 //-----------SET THE PROCESS TABLE ENTRIES FOR INIT PROCESS-------------
 
-[PROCESS_TABLE+16+1] = 1;		//pid
+[PROCESS_TABLE+16+1] = 1;	//pid
 [PROCESS_TABLE+16+4] = RUNNING;	//state
 [PROCESS_TABLE+16+11] = 80;	//user area page no.
 [PROCESS_TABLE+16+12] = 0;      //KPTR
 [PROCESS_TABLE+16+13] = 8*512;
-[PROCESS_TABLE+16+14] = PTBR;   //PTBR
+[PROCESS_TABLE+16+14] = PTBR+20;//PTBR
 [PROCESS_TABLE+16+15] = 10;	//PTLR
 
 //------------------------------------------------------------------------
