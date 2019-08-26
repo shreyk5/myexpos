@@ -9,6 +9,7 @@ int main()
 		while(i<=200)do
 			tmp = exposcall("Write",-2,i);
 			i=i+1;
+			breakpoint;
 		endwhile;
 		return 0;
 	end

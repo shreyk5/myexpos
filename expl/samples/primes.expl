@@ -5,8 +5,8 @@ int main()
 	enddecl
 	
 	begin
-		i=2;
-		while(i<=100)do
+		i=100;
+		while(i<=200)do
 			flag=0;
 			j=2;
 			while(j<i) do
