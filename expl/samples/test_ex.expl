@@ -5,8 +5,8 @@ int main()
 	enddecl
 	
 	begin
-		n = 1;
-		while(n<=100) do
+		n = 100;
+		while(n<=200) do
 			if((n%2)==0) then
 				tmp = exposcall("Write",-2,n);
 			endif;
