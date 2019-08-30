@@ -1,0 +1,45 @@
+[PROCESS_TABLE+[SYSTEM_STATUS_TABLE+1]*16+9]=5;
+alias user_sp R0;
+user_sp = SP;
+
+[PROCESS_TABLE + 16*[SYSTEM_STATUS_TABLE+1]+13] = SP;	// UPTR = SP
+SP = [PROCESS_TABLE+16*[SYSTEM_STATUS_TABLE+1]+11]*512 - 1; //change SP to top of kernel stack
+
+// finding file descriptor
+alias physical_page_num R1;
+alias offset R2;
+alias file_descriptor_physicalAddress R3;
+physical_page_num = [PTBR+2*((user_sp-4)/512)];
+offset = (user_sp-4)%512;
+file_descriptor_physicalAddress = (physical_page_num*512)+offset;
+
+alias file_descriptor R4;
+file_descriptor = [file_descriptor_physicalAddress];
+
+if (file_descriptor != -2)
+then
+	 alias physicalAddrRetVal R5;
+	 physicalAddrRetVal = ([PTBR + 2 * ((user_sp - 1) / 512)] * 512) + ((user_sp - 1) % 512);
+	 [physicalAddrRetVal] = -1;
+else
+	alias word R5;
+	word = [[PTBR + 2 * ((user_sp - 3) / 512)] * 512 + ((user_sp - 3) % 512)];
+
+	//Registers R1,R2,R3,R4,R5 are used upto now so have to be saved in the stack as they will be used to call module 4(for terminal write)
+	multipush(R0,R1,R2,R3,R4,R5,R6);
+	R1 = 3;		//The function no. for terminal write is 3
+	R2 = [SYSTEM_STATUS_TABLE+1];	//PID of the process
+	R3 = word; 
+	call MOD_4; //device manager module which contains the terminal write function
+	multipop(R0,R1,R2,R3,R4,R5,R6); //restore the register contents
+		
+	alias physicalAddrRetVal R6;
+	physicalAddrRetVal = ([PTBR + 2*(user_sp-1)/512]*512) + ((user_sp-1)%512);
+[physicalAddrRetVal] = 0;
+
+endif;
+
+SP = user_sp;
+[PROCESS_TABLE + [SYSTEM_STATUS_TABLE + 1] * 16 + 9] = 0;
+
+ireturn;

@@ -18,6 +18,14 @@ loadi(17,30);
 
 loadi(83,69);   //load executable file
 
+loadi(40,53);	//load module 0
+loadi(41,54);
+
+loadi(48,61);	//load module 4
+loadi(49,62);
+
+[TERMINAL_STATUS_TABLE] = 0;
+
 // initialise STATE field to be TERMINATED for other processes
 
 alias i R1;
