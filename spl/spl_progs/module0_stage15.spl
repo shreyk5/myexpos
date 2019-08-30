@@ -2,13 +2,13 @@ alias functionNum R1;
 alias curr_pid R2;
 
 if(functionNum == 8) then
-	while([TERMINAL_STATUS_TABLE] == 1) do
+	while([TERMINAL_STATUS_TABLE] == 1) do //check if terminal is already in use
 		[PROCESS_TABLE+curr_pid*16+4] = WAIT_TERMINAL;
 		multipush(R0,R1,R2,R3,R4,R5,R6);
-		call MOD_5;
+		call MOD_5;	//schedule some other process while curr process is waiting for terminal to be freed
 		multipop(R0,R1,R2,R3,R4,R5,R6);
 	endwhile;
-	[TERMINAL_STATUS_TABLE] = 1;
+	[TERMINAL_STATUS_TABLE] = 1;	//give the terminal to this process
 	[TERMINAL_STATUS_TABLE+1] = curr_pid;
 	return;
 endif;
@@ -19,16 +19,16 @@ if(functionNum == 9) then
 		return;
 	endif;
 	
-	[TERMINAL_STATUS_TABLE] = 0;
+	[TERMINAL_STATUS_TABLE] = 0;	//free the terminal
 	
 	alias i R7;
 	i = 0;
 	while(i<16) do
 		if([PROCESS_TABLE+i*16+4] == WAIT_TERMINAL) then
-			[PROCESS_TABLE+i*16+4] = READY;
+			[PROCESS_TABLE+i*16+4] = READY;	//set status of all processes who were waiting for terminal as READY
 		endif;
 		i = i + 1;
 	endwhile;
-	R0 = 0;
+	R0 = 0; //successful 
 	return;	
 endif;

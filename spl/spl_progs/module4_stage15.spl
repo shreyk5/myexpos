@@ -10,7 +10,7 @@ if(functionNum==3) then
 	call MOD_0;
 	multipop(R0,R1,R2,R3,R4,R5,R6);
 	
-	print word;
+	print word;	//terminal has been acquired
 	
 	multipush(R0,R1,R2,R3,R4,R5,R6);
 	// call release terminal using function no. 9 in R1 and pid in R2
