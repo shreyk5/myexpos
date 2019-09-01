@@ -1,0 +1,54 @@
+//--------------------read system call----------------------
+alias userSP R0;
+alias curr_pid R1;
+
+curr_pid = [SYSTEM_STATUS_TABLE+1];
+[PROCESS_TABLE+curr_pid*16+9] = 7; //set the mode flag to 7(read sys call no.)
+
+userSP = SP;
+
+//save the SP in UPTR of current process
+[PROCESS_TABLE+curr_pid*16+13] = SP;
+
+//change SP to kernel stack pointer
+SP = [PROCESS_TABLE+curr_pid*16+11]*512-1;
+
+//retrieve file descriptor from the user stack
+alias fileDescLogicalAddress R2;
+alias logicalPage R3;
+alias fileDescPhyAddress R4;
+alias offset R5;
+
+fileDescLogicalAddress = userSP-4;
+logicalPage = fileDescLogicalAddress/512;
+offset = fileDescLogicalAddress % 512;
+
+fileDescPhyAddress = [PTBR+logicalPage*2]*512 + offset;
+
+alias fileDesc R6;
+alias RetAddress R7;
+fileDesc = [fileDescPhyAddress];
+RetAddress = [PTBR+2*(userSP-1)/512]*512 + ((userSP-1)%512);
+if(fileDesc != -1) then
+	[RetAddress] = -1;
+else
+	alias word_address R8;
+	alias word R9;
+	
+	word_address = [PTBR+2*(userSP-3)/512]*512+(userSP-3)%512;
+	word = [word_address];
+	
+	backup;
+	R1 = 4;		//function number for terminal read
+	R2 = [SYSTEM_STATUS_TABLE+1];
+	R3 = word;
+	call MOD_4;
+	restore;
+	
+	[RetAddress] = 0;
+endif;
+
+[PROCESS_TABLE+curr_pid*16+9] = 0;
+SP = userSP;
+
+ireturn;

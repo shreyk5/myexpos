@@ -4,12 +4,13 @@ alias curr_pid R2;
 if(functionNum == 8) then
 	while([TERMINAL_STATUS_TABLE] == 1) do //check if terminal is already in use
 		[PROCESS_TABLE+curr_pid*16+4] = WAIT_TERMINAL;
-		multipush(R0,R1,R2,R3,R4,R5,R6);
+		backup;
 		call MOD_5;	//schedule some other process while curr process is waiting for terminal to be freed
-		multipop(R0,R1,R2,R3,R4,R5,R6);
+		restore;
 	endwhile;
 	[TERMINAL_STATUS_TABLE] = 1;	//give the terminal to this process
 	[TERMINAL_STATUS_TABLE+1] = curr_pid;
+	breakpoint;
 	return;
 endif;
 

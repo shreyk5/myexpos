@@ -24,6 +24,8 @@ while(i < 16) do
 	i = i + 1;
 endwhile;
 
+//breakpoint;
+
 //change the SP to kernel stack of new process
 SP = [PROCESS_TABLE+16*new_pid+11]*512 + [PROCESS_TABLE+16*new_pid+12]; 
 PTBR = [PROCESS_TABLE+16*new_pid+14];
@@ -39,7 +41,7 @@ if([PROCESS_TABLE+new_pid*16+4]==CREATED) then
 endif;
 
 [PROCESS_TABLE+new_pid*16+4] = RUNNING;
-
+//breakpoint;
 multipop(BP);
-
+breakpoint;
 return;
