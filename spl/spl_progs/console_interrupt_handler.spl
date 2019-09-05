@@ -7,7 +7,7 @@ backup;	//taking backup of currently running process
 
 alias req_pid R0;
 req_pid = [TERMINAL_STATUS_TABLE+1];
-breakpoint;
+//breakpoint;
 
 [PROCESS_TABLE+req_pid*16+8] = P0;
 
@@ -16,7 +16,7 @@ backup;
 //now release the terminal as the input has been read by calling resource manager module
 R1 = 9;
 R2 = req_pid;
-breakpoint;
+//breakpoint;
 call MOD_0;
 restore;
 //---------------------------------------------

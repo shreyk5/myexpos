@@ -4,6 +4,7 @@ alias curr R0;
 alias not_running R1;
 not_running = 1;
 curr = 1;
+SP = [PROCESS_TABLE+[SYSTEM_STATUS_TABLE+1]*16+11]*512-1;
 
 while(curr < 16) do
 	if([PROCESS_TABLE+(curr*16)+4] != TERMINATED) then

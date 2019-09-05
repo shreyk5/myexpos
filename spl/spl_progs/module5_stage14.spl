@@ -43,5 +43,5 @@ endif;
 [PROCESS_TABLE+new_pid*16+4] = RUNNING;
 //breakpoint;
 multipop(BP);
-breakpoint;
+//breakpoint;
 return;
