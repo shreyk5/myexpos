@@ -42,19 +42,20 @@ if(R1 == RELEASE_PAGE) then
 	if([MEMORY_FREE_LIST + page_num] == 0) then
 		//increment the memory free count
 		[SYSTEM_STATUS_TABLE+2] = [SYSTEM_STATUS_TABLE+2]+1;
+
+		//update the status of processes waiting for memory
+		alias i R3;
+		i = 0;
+	
+		while(i<16) do
+			if([PROCESS_TABLE+16*i+4] == WAIT_MEM) then
+				[PROCESS_TABLE+16*i+4] = READY;
+			endif;
+			i = i + 1;
+		endwhile;
+
 	endif;
 	
-	//update the status of processes waiting for memory
-	alias i R3;
-	i = 0;
-	
-	while(i<16) do
-		if([PROCESS_TABLE+16*i+4] == WAIT_MEM) then
-			[PROCESS_TABLE+16*i+4] = READY;
-		endif;
-		i = i + 1;
-	endwhile;
-
 	restore;			
 	return;
 endif;
