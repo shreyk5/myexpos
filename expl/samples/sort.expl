@@ -1,23 +1,28 @@
 decl
-	int a[5];
+	int a[10];
 enddecl
 int main()
 {
 	decl
-		int i,j,tmp,t;
+		int i,j,tmp,t,n;
+		str prompt;
 	enddecl
 	
 	begin
-		a[0]=300;
-		a[1]=299;
-		a[2]=298;
-		a[3]=297;
-		a[4]=296;
+		prompt = "Enter no. of elem";
+		tmp = exposcall("Write",-2,prompt);
+		tmp = exposcall("Read",-1,n);
+		i = 0;
+		while(i<n) do
+			tmp = exposcall("Read",-1,a[i]);
+			i = i + 1;
+		endwhile;
+		
 		i = 0;
 		j = 0;
-		while(i<4) do
+		while(i<n) do
 			j = 0;
-			while((j<(4-i))) do
+			while((j<(n-i-1))) do
 				if(a[j]>a[j+1]) then
 					t = a[j];
 					a[j] = a[j+1];
@@ -28,10 +33,11 @@ int main()
 			i = i + 1;
 		endwhile;
 		i = 0;
-		while(i<5) do
+		while(i<n) do
 			tmp = exposcall("Write",-2,a[i]);
 			i = i + 1;
 		endwhile;
 		return 0;
 	end
 }
+

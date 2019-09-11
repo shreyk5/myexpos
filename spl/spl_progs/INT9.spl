@@ -62,7 +62,7 @@ user_page = [PROCESS_TABLE+[SYSTEM_STATUS_TABLE+1]*16+11];
 [MEMORY_FREE_LIST + user_page] = [MEMORY_FREE_LIST + user_page] + 1;
 [SYSTEM_STATUS_TABLE+2] = [SYSTEM_STATUS_TABLE+2] - 1;	//decrement the memory free count field in SYSTEM_STATUS_TABLE
 
-SP = user_page*512 - 1;
+//SP = user_page*512 - 1;
 
 //new process uses the PID of the terminated process
 [PROCESS_TABLE+[SYSTEM_STATUS_TABLE+1]*16+4] = RUNNING;

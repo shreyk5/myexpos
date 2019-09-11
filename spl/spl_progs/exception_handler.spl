@@ -11,8 +11,9 @@ multipush(EIP);
 //print EC;
 //restore;
 
-//breakpoint;
-if((EC==1)) then
+breakpoint;
+//multipush(EC);
+if(EC==1) then
 	backup;
 	print("Illegal inst");
 	R1 = EXIT_PROCESS;
@@ -21,9 +22,11 @@ if((EC==1)) then
 	restore;
 	call MOD_5;
 endif;
+//multipop(EC);
 
 //breakpoint;
-if((EC==2)) then
+//multipush(EC);
+if(EC==2) then
 
 	backup;
 	print("Illegal memory access");
@@ -34,13 +37,14 @@ if((EC==2)) then
 	
 	call MOD_5;
 endif;
+//multipop(EC);
 
 //backup;
 //print EC;
 //restore;
 
 //breakpoint;
-if((EC==3)) then
+if(EC == 3) then
 	backup;	
 	print("Arithmetic");
 	R1 = EXIT_PROCESS;
@@ -51,7 +55,7 @@ if((EC==3)) then
 	call MOD_5;
 endif;
 
-if((EC == 0)) then
+if(EC == 0) then
 	print("Loading pages..");
 	if((EPN == 2) || (EPN == 3)) then
 		R1 = GET_FREE_PAGE;
