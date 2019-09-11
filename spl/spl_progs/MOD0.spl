@@ -10,7 +10,7 @@ if(functionNum == ACQUIRE_TERMINAL) then
 	endwhile;
 	[TERMINAL_STATUS_TABLE] = 1;	//give the terminal to this process
 	[TERMINAL_STATUS_TABLE+1] = curr_pid;
-	breakpoint;
+	//breakpoint;
 	return;
 endif;
 

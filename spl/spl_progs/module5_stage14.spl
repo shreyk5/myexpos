@@ -34,6 +34,7 @@ PTLR = [PROCESS_TABLE+16*new_pid+15];
 [SYSTEM_STATUS_TABLE+1] = new_pid;
 
 if([PROCESS_TABLE+new_pid*16+4]==CREATED) then
+	//BP = [[PROCESS_TABLE + new_pid*16 + 11] * 512];
 	[PROCESS_TABLE+new_pid*16+4] = RUNNING;
 	[PROCESS_TABLE+new_pid*16+9] = 0;
 	SP = [PROCESS_TABLE+new_pid*16+13];

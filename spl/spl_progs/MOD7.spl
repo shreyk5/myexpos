@@ -45,6 +45,8 @@ loadi(60,4);
 loadi(6,19);	//load disk controller interrupt routine
 loadi(7,20);
 
+loadi(61,2);	//load the disk free list
+
 //initialise memory free list
 alias i R1;
 i = 0;

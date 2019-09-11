@@ -25,7 +25,9 @@ int main()
 			a=b;
 			b=t%b;
 		endwhile;
-		tmp=exposcall("Write",-2,ans);					
+		tmp=exposcall("Write",-2,ans);
+		b = 10;
+		a = b/0;
 		return 0;
 	end
 }

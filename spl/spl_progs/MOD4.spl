@@ -34,7 +34,7 @@ if(functionNum==4) then
 	read;
 	[PROCESS_TABLE+16*curr_pid+4] = WAIT_TERMINAL;
 	backup;		//save context
-	breakpoint;
+	//breakpoint;
 	call MOD_5;	//schedule another process
 	restore;	//restore context
 	

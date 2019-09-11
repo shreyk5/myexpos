@@ -5,13 +5,9 @@ int main()
 	enddecl
 	
 	begin
-		n = 100;
-		while(n<=200) do
-			if((n%2)==0) then
-				tmp = exposcall("Write",-2,n);
-			endif;
-			n = n + 1;
-		endwhile;
+		breakpoint;
+		n = 10/0;
+		breakpoint;
 		return 0;
 	end
 }
