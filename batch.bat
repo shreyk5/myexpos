@@ -16,4 +16,4 @@ load --module 1 ../spl/spl_progs/MOD1.xsm
 load --module 2 ../spl/spl_progs/MOD2.xsm
 load --idle ../expl/samples/idle.xsm
 load --init ../expl/samples/shell_prg1.xsm
-load --exec ../expl/samples/test_ex.xsm
+load --exec ../expl/samples/student.xsm

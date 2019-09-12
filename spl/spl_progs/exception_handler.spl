@@ -1,3 +1,4 @@
+//breakpoint;
 //set the mode flag to -1
 [PROCESS_TABLE+[SYSTEM_STATUS_TABLE+1]*16+9] = -1;
 
@@ -11,11 +12,13 @@ multipush(EIP);
 //print EC;
 //restore;
 
-breakpoint;
+//breakpoint;
 //multipush(EC);
+//print EC;
+
 if(EC==1) then
 	backup;
-	print("Illegal inst");
+	print("IllInst");
 	R1 = EXIT_PROCESS;
 	R2 = [SYSTEM_STATUS_TABLE+1];
 	call MOD_1;
@@ -26,10 +29,11 @@ endif;
 
 //breakpoint;
 //multipush(EC);
+//print EC;
 if(EC==2) then
 
 	backup;
-	print("Illegal memory access");
+	print("IllAccess");
 	R1 = EXIT_PROCESS;
 	R2 = [SYSTEM_STATUS_TABLE+1];
 	call MOD_1;
@@ -40,13 +44,14 @@ endif;
 //multipop(EC);
 
 //backup;
+//breakpoint;
 //print EC;
 //restore;
 
 //breakpoint;
 if(EC == 3) then
 	backup;	
-	print("Arithmetic");
+	print("Arithmet");
 	R1 = EXIT_PROCESS;
 	R2 = [SYSTEM_STATUS_TABLE+1];
 	call MOD_1;
@@ -56,7 +61,9 @@ if(EC == 3) then
 endif;
 
 if(EC == 0) then
-	print("Loading pages..");
+	//print(EC);
+	//print(EPN);
+	print "PFault";
 	if((EPN == 2) || (EPN == 3)) then
 		R1 = GET_FREE_PAGE;
 		call MOD_2;
@@ -71,7 +78,8 @@ if(EC == 0) then
 
 	if((EPN==4) || (EPN==5) || (EPN==6) || (EPN==7)) then
 		R1 = GET_CODE_PAGE;
-		R2 = [DISK_STATUS_TABLE+[SYSTEM_STATUS_TABLE+1]*10+EPN];
+		R2 = [DISK_MAP_TABLE+[SYSTEM_STATUS_TABLE+1]*10+EPN];
+		breakpoint;
 		call MOD_2;
 			
 		[PTBR+EPN*2] = R0;

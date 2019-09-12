@@ -21,7 +21,7 @@ int main()
 	
 	tmp = exposcall("Write",-2,s1.name);
 	tmp = exposcall("Write",-2,s1.marks);	
-
+	tmp = 10/0;
 	return 0;
     end
 }
