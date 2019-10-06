@@ -39,6 +39,12 @@ if(R1 == FREE_PAGE_TABLE) then	// free page table
 	alias pid R4;
 	i = 4;
 	pid = R2;
+
+	//invalidate the page table entries for the library without releasing
+	[PAGE_TABLE_BASE+20*pid+0] = -1;
+	[PAGE_TABLE_BASE+20*pid+1] = "0000";
+	[PAGE_TABLE_BASE+20*pid+2] = -1;
+	[PAGE_TABLE_BASE+20*pid+3] = "0000";
 	
 	while(i<20) do
 		if([PAGE_TABLE_BASE + 20*pid + i] != -1) then
@@ -102,4 +108,23 @@ if(R1 == FREE_PAGE_TABLE) then	// free page table
 		
 	restore;
 	return;	
+endif;
+
+if(R1 == GET_PCB_ENTRY) then
+	alias i R5;
+	i = 0;
+	R0 = -1;
+	while(i<16) do
+		if([PROCESS_TABLE+16*i+4] == TERMINATED) then
+			R0 = i;
+			[PROCESS_TABLE+16*i+4] = ALLOCATED;
+			[PROCESS_TABLE+16*i+1] = i;
+			[PROCESS_TABLE+16*i+14] = PAGE_TABLE_BASE+i*20;
+			[PROCESS_TABLE+16*i+15] = 10;
+			return;
+		endif;
+		i = i + 1;
+	endwhile;
+
+	return;
 endif;

@@ -37,7 +37,7 @@ int main()
 			tmp = exposcall("Write",-2,a[i]);
 			i = i + 1;
 		endwhile;
-		i = 10/0;
+		//i = 10/0;
 		return 0;
 	end
 }

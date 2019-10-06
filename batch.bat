@@ -3,6 +3,7 @@ load --library ../expl/library.lib
 load --int=timer ../spl/spl_progs/timer_stage14.xsm
 load --int=6 ../spl/spl_progs/INT6.xsm
 load --int=7 ../spl/spl_progs/INT7.xsm
+load --int=8 ../spl/spl_progs/INT8.xsm
 load --int=9 ../spl/spl_progs/INT9.xsm
 load --int=10 ../spl/spl_progs/INT10.xsm
 load --int=console ../spl/spl_progs/console_interrupt_handler.xsm
@@ -15,5 +16,6 @@ load --module 4 ../spl/spl_progs/MOD4.xsm
 load --module 1 ../spl/spl_progs/MOD1.xsm
 load --module 2 ../spl/spl_progs/MOD2.xsm
 load --idle ../expl/samples/idle.xsm
-load --init ../expl/samples/shell_prg1.xsm
-load --exec ../expl/samples/student.xsm
+load --init ../expl/samples/fork_s20.xsm
+load --exec ../expl/samples/Odd.xsm
+load --exec ../expl/samples/Even.xsm

@@ -1,21 +1,15 @@
-[PROCESS_TABLE+([SYSTEM_STATUS_TABLE+1]*16)+4]=TERMINATED;
+[PROCESS_TABLE+[SYSTEM_STATUS_TABLE+1]*16+9] = 10;  //set mode flag
 
-alias curr R0;
-alias not_running R1;
-not_running = 1;
-curr = 1;
+[PROCESS_TABLE+[SYSTEM_STATUS_TABLE+1]*16+13] = SP;
 SP = [PROCESS_TABLE+[SYSTEM_STATUS_TABLE+1]*16+11]*512-1;
 
-while(curr < 16) do
-	if([PROCESS_TABLE+(curr*16)+4] != TERMINATED) then
-		not_running = 0;
-		break;
-	endif;
-	curr = curr + 1;
-endwhile;
+// no need to set the process to terminated as exit process will do it
+backup;
+R1 = EXIT_PROCESS;
+R2 = [SYSTEM_STATUS_TABLE+1];
+call MOD_1;
+restore;
 
-if(not_running == 1) then
-	halt;
-else
-	call MOD_5;
-endif;
+call MOD_5;	//schedule processes
+
+

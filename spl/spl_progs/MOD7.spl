@@ -47,6 +47,9 @@ loadi(7,20);
 
 loadi(61,2);	//load the disk free list
 
+loadi(18,31);	//load INT8
+loadi(19,32);
+
 //initialise memory free list
 alias i R1;
 i = 0;
