@@ -50,6 +50,12 @@ loadi(61,2);	//load the disk free list
 loadi(18,31);	//load INT8
 loadi(19,32);
 
+loadi(24,37);	//load INT11
+loadi(25,38);
+
+loadi(32,45);	//load INT15
+loadi(33,46);
+
 //initialise memory free list
 alias i R1;
 i = 0;

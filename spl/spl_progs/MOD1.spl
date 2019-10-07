@@ -26,8 +26,28 @@ if(R1 == EXIT_PROCESS) then	// exit process
 	R1 = FREE_USER_AREA_PAGE;	
 	R2 = pid;
 	call MOD_1;
-
+	
 	restore;
+	
+	//------------------------------wake up the processes which were waiting for this process----------------------------
+	backup;
+	if([PROCESS_TABLE+R2*16+9]!=9) then //Exit was not called from EXEC
+		alias i R4;
+		i = 0;
+		while(i<16) do
+			if([PROCESS_TABLE+i*16+4] == WAIT_PROCESS && [PROCESS_TABLE+i*16+5] == R2) then
+				[PROCESS_TABLE+i*16+4] = READY;
+			endif;
+			
+			if([PROCESS_TABLE+i*16+2] == R2) then	//checking the ppid of each process
+				[PROCESS_TABLE+i*16+2] = -1;	//indicating that child process has become orphan
+			endif;
+			i = i + 1;
+		endwhile;
+	endif;
+	restore;
+	//--------------------------------------------------------------------------------------------------------------------
+		
 	[PROCESS_TABLE+R2*16+4] = TERMINATED;
 	//print(R2);
 	return;
