@@ -1,7 +1,8 @@
 alias functionNum R1;
-alias curr_pid R2;
+//alias curr_pid R2;
 
 if(functionNum == ACQUIRE_TERMINAL) then
+	alias curr_pid R2;
 	while([TERMINAL_STATUS_TABLE] == 1) do //check if terminal is already in use
 		[PROCESS_TABLE+curr_pid*16+4] = WAIT_TERMINAL;
 		backup;
@@ -15,6 +16,7 @@ if(functionNum == ACQUIRE_TERMINAL) then
 endif;
 
 if(functionNum == RELEASE_TERMINAL) then
+	alias curr_pid R2;
 	if(curr_pid != [TERMINAL_STATUS_TABLE+1]) then
 		R0 = -1;
 		return;
@@ -35,6 +37,7 @@ if(functionNum == RELEASE_TERMINAL) then
 endif;
 
 if(functionNum == ACQUIRE_DISK) then
+	alias curr_pid R2;
 	while([DISK_STATUS_TABLE]==1) do
 		[PROCESS_TABLE+16*curr_pid+4] = WAIT_DISK;
 		backup;
@@ -45,5 +48,49 @@ if(functionNum == ACQUIRE_DISK) then
 	[DISK_STATUS_TABLE] = 1;
 	[DISK_STATUS_TABLE+4] = curr_pid;
 	
+	return;
+endif;
+
+if(functionNum == ACQUIRE_SEMAPHORE) then
+	alias curr_pid R2;
+	//find a free entry in the semaphore table
+	alias i R4;
+	i = 0;
+	R0 = -1;
+	while(i<(MAX_SEM_COUNT)) do
+		if([SEMAPHORE_TABLE+i*4+1] == 0) then
+			[SEMAPHORE_TABLE+i*4+1] = 1;	//process count
+			[SEMAPHORE_TABLE+i*4+0] = -1;	//Locking PID
+			R0 = i;
+			return;
+		endif;
+		i = i + 1;
+	endwhile;
+
+	return;
+endif;
+
+if(functionNum == RELEASE_SEMAPHORE) then
+	alias curr_pid R3;
+	alias sem_table_idx R2;
+
+	//if the semaphore to be released is locked by the process then unlock it for other processes
+	if([SEMAPHORE_TABLE + sem_table_idx*4] == curr_pid) then
+		[SEMAPHORE_TABLE + sem_table_idx*4] = -1;	//unlock the semaphore
+	endif;
+
+	alias i R4;
+	i = 0;
+
+	while(i<16) do
+		if([PROCESS_TABLE+i*16+4] == WAIT_SEMAPHORE && [PROCESS_TABLE+i*16+5] == sem_table_idx) then
+			[PROCESS_TABLE+i*16+4] = READY;
+		endif;
+		i = i + 1;
+	endwhile;
+
+	//decrement the process count in the semaphore table entry
+	[SEMAPHORE_TABLE + 4*sem_table_idx + 1] = [SEMAPHORE_TABLE + 4*sem_table_idx + 1] - 1; 
+
 	return;
 endif;
