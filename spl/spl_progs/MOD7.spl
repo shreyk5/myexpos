@@ -56,6 +56,12 @@ loadi(25,38);
 loadi(32,45);	//load INT15
 loadi(33,46);
 
+loadi(28,41);	//load INT13
+loadi(29,42);
+
+loadi(30,43);	//load INT14
+loadi(31,44);
+
 //initialise memory free list
 alias i R1;
 i = 0;
@@ -67,6 +73,15 @@ while(i<128) do
 		[MEMORY_FREE_LIST+i] = 0;
 	endif;
 	i = i + 1;
+endwhile;
+
+//initialise the semaphore table for all entries
+i = 0;
+
+while(i < MAX_SEM_COUNT) do
+	[SEMAPHORE_TABLE + 4*i + 0] = -1;
+	[SEMAPHORE_TABLE + 4*i + 1] = 0;
+	i = i + 1;	
 endwhile;
 
 [TERMINAL_STATUS_TABLE] = 0;

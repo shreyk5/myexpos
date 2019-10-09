@@ -4,11 +4,32 @@
 
 if(R1 == FREE_USER_AREA_PAGE) then	// free user area page
 	//get the user area page using PID
+
+	//go through resource table entries and release the semaphores used by the process
+	backup;
+	alias i R5;
+	i = 496;
+	alias user_area_page R6;
+	user_area_page = [PROCESS_TABLE + R2*16 + 11];
+	while(i<512) do
+		if([user_area_page*512 + i] == 1) then
+			backup;
+			R1 = RELEASE_SEMAPHORE;
+			R3 = R2;	//PID of the process
+			R2 = [user_area_page*512 + i + 1];  //semaphore table index
+			call MOD_0;
+			restore;
+		endif; 
+		i = i + 2;
+	endwhile;
+	restore; 
+
 	backup;
 	R1 = RELEASE_PAGE;
 	R2 = [PROCESS_TABLE + R2*16 + 11]; //user area page
 	call MOD_2;
 	restore;
+
 	return;
 endif;
 

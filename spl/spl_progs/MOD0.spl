@@ -77,18 +77,17 @@ if(functionNum == RELEASE_SEMAPHORE) then
 	//if the semaphore to be released is locked by the process then unlock it for other processes
 	if([SEMAPHORE_TABLE + sem_table_idx*4] == curr_pid) then
 		[SEMAPHORE_TABLE + sem_table_idx*4] = -1;	//unlock the semaphore
+
+		alias i R4;
+		i = 0;
+		while(i<16) do
+			if([PROCESS_TABLE+i*16+4] == WAIT_SEMAPHORE && [PROCESS_TABLE+i*16+5] == sem_table_idx) then
+				[PROCESS_TABLE+i*16+4] = READY;
+			endif;
+			i = i + 1;
+		endwhile;
 	endif;
-
-	alias i R4;
-	i = 0;
-
-	while(i<16) do
-		if([PROCESS_TABLE+i*16+4] == WAIT_SEMAPHORE && [PROCESS_TABLE+i*16+5] == sem_table_idx) then
-			[PROCESS_TABLE+i*16+4] = READY;
-		endif;
-		i = i + 1;
-	endwhile;
-
+	
 	//decrement the process count in the semaphore table entry
 	[SEMAPHORE_TABLE + 4*sem_table_idx + 1] = [SEMAPHORE_TABLE + 4*sem_table_idx + 1] - 1; 
 

@@ -7,6 +7,8 @@ load --int=8 ../spl/spl_progs/INT8.xsm
 load --int=9 ../spl/spl_progs/INT9.xsm
 load --int=10 ../spl/spl_progs/INT10.xsm
 load --int=11 ../spl/spl_progs/INT11.xsm
+load --int=13 ../spl/spl_progs/INT13.xsm
+load --int=14 ../spl/spl_progs/INT14.xsm
 load --int=15 ../spl/spl_progs/INT15.xsm
 load --int=console ../spl/spl_progs/console_interrupt_handler.xsm
 load --int=disk ../spl/spl_progs/disk_handler.xsm
@@ -18,7 +20,7 @@ load --module 4 ../spl/spl_progs/MOD4.xsm
 load --module 1 ../spl/spl_progs/MOD1.xsm
 load --module 2 ../spl/spl_progs/MOD2.xsm
 load --idle ../expl/samples/idle.xsm
-load --init ../expl/samples/asg2_s21.xsm
+load --init ../expl/samples/shell_s21.xsm
 load --exec ../expl/samples/Odd.xsm
 load --exec ../expl/samples/Even.xsm
 load --exec ../expl/samples/pid.xsm
