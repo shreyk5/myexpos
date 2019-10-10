@@ -60,7 +60,7 @@ List mergeSort(List top)
         pid=exposcall("Fork");
 
         //If Fork is not possible, do sequential
-        if(pid==-1) then
+        if(pid==-1) then	
           a=mergeSort(a);
           b=mergeSort(b);
         else
@@ -137,9 +137,9 @@ int main()
     //Storing values in descending order
     head=null;
     counter=0;
-    while(counter<64) do
+    while(counter<32) do
       p=alloc();
-      p.data=64-counter;
+      p.data=32-counter;
       p.next=null;
 
       if(head==null) then

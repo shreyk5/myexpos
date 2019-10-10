@@ -7,10 +7,9 @@
 SP = [PROCESS_TABLE+[SYSTEM_STATUS_TABLE+1]*16+11]*512-1;
 backup;
 
+
 multipush(EIP);
-//backup;
-//print EC;
-//restore;
+breakpoint;
 
 //breakpoint;
 //multipush(EC);
@@ -33,6 +32,7 @@ endif;
 if(EC==2) then
 
 	backup;
+	//print EIP;
 	print("IllAccess");
 	R1 = EXIT_PROCESS;
 	R2 = [SYSTEM_STATUS_TABLE+1];

@@ -96,7 +96,7 @@ while(i<16) do
 endwhile;
 
 [SYSTEM_STATUS_TABLE+3] = 0;	//wait_mem_count
-[SYSTEM_STATUS_TABLE+2] = 46;	//mem_free_count
+[SYSTEM_STATUS_TABLE+2] = 45;	//mem_free_count
 
 //-----------------set page table entries for INIT program--------------------
 PTBR = PAGE_TABLE_BASE + 20;

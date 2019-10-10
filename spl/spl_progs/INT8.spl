@@ -1,7 +1,9 @@
 //set the mode flag to 8(system call no. of fork)
 [PROCESS_TABLE+[SYSTEM_STATUS_TABLE+1]*16+9] = 8;
 [PROCESS_TABLE+[SYSTEM_STATUS_TABLE+1]*16+13] = SP; //save the SP into UPTR
-
+//if([SYSTEM_STATUS_TABLE+1]==3) then
+//print SP;
+//endif;
 SP = [PROCESS_TABLE+[SYSTEM_STATUS_TABLE+1]*16+11]*512 - 1; //change SP to kernel stack
 
 //now get the PID for child process using Get pcb entry
@@ -11,11 +13,11 @@ call MOD_1;
 
 alias childPID R15;
 childPID = R0;
+//print "PID:";
 //print childPID;
 //if no PID is found
 if(R0 == -1) then
 	//set the return value to -1
-	multipush(R1);
 	alias userSP R1;
 	userSP = [PROCESS_TABLE+[SYSTEM_STATUS_TABLE+1]*16+13];
 	[[PTBR+2*(userSP-1)/512]*512 + (userSP-1)%512] = -1;
@@ -23,8 +25,7 @@ if(R0 == -1) then
 	//set mode flag to 0
 	[PROCESS_TABLE+[SYSTEM_STATUS_TABLE+1]*16+9] = 0;
 	SP = userSP;
-	
-	multipop(R1);
+	//print "hi";	
 	ireturn;
 endif;
 
@@ -35,6 +36,7 @@ if([PTBR+4]==-1) then
 	
 	R1 = GET_FREE_PAGE;
 	call MOD_2;
+
 	[PTBR+4] = R0;
 	[PTBR+5] = "0110";
 	
@@ -46,6 +48,7 @@ if([PTBR+6]==-1) then
 
 	R1 = GET_FREE_PAGE;
 	call MOD_2;
+
 	[PTBR+6] = R0;
 	[PTBR+7] = "0110";
 	
@@ -68,6 +71,7 @@ child_protable = PROCESS_TABLE+16*childPID;
 backup;
 R1 = GET_FREE_PAGE;
 call MOD_2;
+
 [child_pt+16] = R0;
 [child_pt+17] = "0110";
 restore;
@@ -75,6 +79,7 @@ restore;
 backup;
 R1 = GET_FREE_PAGE;
 call MOD_2;
+
 [child_pt+18] = R0;
 [child_pt+19] = "0110";
 restore;
@@ -164,6 +169,7 @@ alias child_stack R7;
 
 par_stack = [PTBR+16]*512;	//stack page 1
 child_stack = [child_pt+16]*512;
+breakpoint;
 
 i = 0;
 while(i<512) do
@@ -174,6 +180,7 @@ endwhile;
 par_stack = [PTBR+18]*512;	//stack page 2
 child_stack = [child_pt+18]*512;
 
+breakpoint;
 i = 0;
 while(i<512) do
 	[child_stack+i] = [par_stack+i];
@@ -187,13 +194,16 @@ endwhile;
 par_stack = [par_protable+13];
 child_stack = [child_protable+13];
 
-breakpoint;
+//breakpoint;
 
 [[PTBR+2*(par_stack-1)/512]*512+(par_stack-1)%512] = childPID;
 [[child_pt+2*(child_stack-1)/512]*512+(child_stack-1)%512] = 0;
 
-SP = [par_protable+13];
+[PROCESS_TABLE+[SYSTEM_STATUS_TABLE+1]*16+9] = 0; //reset the mode flag of parent to 0
 
-//reset the mode flag of parent to 0
-[par_protable+9] = 0;
+SP = [PROCESS_TABLE+[SYSTEM_STATUS_TABLE+1]*16+13];
+//if([SYSTEM_STATUS_TABLE+1]==3) then
+//print SP;
+//endif;
+
 ireturn;

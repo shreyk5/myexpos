@@ -35,20 +35,6 @@ endif;
 
 
 if(R1 == EXIT_PROCESS) then	// exit process
-	backup;
-
-	alias pid R3;
-	pid = R2;
-		
-	R1 = FREE_PAGE_TABLE;
-	R2 = pid;
-	call MOD_1;
-
-	R1 = FREE_USER_AREA_PAGE;	
-	R2 = pid;
-	call MOD_1;
-	
-	restore;
 	
 	//------------------------------wake up the processes which were waiting for this process----------------------------
 	backup;
@@ -68,6 +54,20 @@ if(R1 == EXIT_PROCESS) then	// exit process
 	endif;
 	restore;
 	//--------------------------------------------------------------------------------------------------------------------
+	backup;
+
+	alias pid R3;
+	pid = R2;
+		
+	R1 = FREE_PAGE_TABLE;
+	R2 = pid;
+	call MOD_1;
+
+	R1 = FREE_USER_AREA_PAGE;	
+	R2 = pid;
+	call MOD_1;
+	
+	restore;
 		
 	[PROCESS_TABLE+R2*16+4] = TERMINATED;
 	//print(R2);
@@ -163,8 +163,8 @@ if(R1 == GET_PCB_ENTRY) then
 			[PROCESS_TABLE+16*i+1] = i;
 			[PROCESS_TABLE+16*i+14] = PAGE_TABLE_BASE+i*20;
 			[PROCESS_TABLE+16*i+15] = 10;
-			multipop(R5);
-			return;
+			//multipop(R5);
+			break;
 		endif;
 		i = i + 1;
 	endwhile;
