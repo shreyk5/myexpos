@@ -141,6 +141,20 @@ PTBR = PTBR - 20;
 
 [76*512] = [65*512+1];
 
+//initialise the disk map table entries
+i = 0;
+while(i<10) do
+	[DISK_MAP_TABLE + 10 + i] = -1;
+	if(i==4) then
+		[DISK_MAP_TABLE + 10 + i] = 7;
+	endif;
+	
+	if(i==5) then
+		[DISK_MAP_TABLE + 10 + i] = 8;
+	endif;
+	i = i + 1;
+endwhile;
+
 //initialise resource table of init process
 i = 510;
 

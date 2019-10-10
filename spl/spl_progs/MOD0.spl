@@ -90,6 +90,6 @@ if(functionNum == RELEASE_SEMAPHORE) then
 	
 	//decrement the process count in the semaphore table entry
 	[SEMAPHORE_TABLE + 4*sem_table_idx + 1] = [SEMAPHORE_TABLE + 4*sem_table_idx + 1] - 1; 
-
+	
 	return;
 endif;

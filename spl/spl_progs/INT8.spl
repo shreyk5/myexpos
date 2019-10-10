@@ -37,14 +37,19 @@ if([PTBR+4]==-1) then
 	call MOD_2;
 	[PTBR+4] = R0;
 	[PTBR+5] = "0110";
+	
+	restore;
+endif;
+
+if([PTBR+6]==-1) then
+	backup;
 
 	R1 = GET_FREE_PAGE;
 	call MOD_2;
 	[PTBR+6] = R0;
 	[PTBR+7] = "0110";
 	
-	restore;
-	
+	restore;	
 endif;
 
 //now allocated two stack pages and one user area page for child
@@ -60,23 +65,29 @@ child_pt = PAGE_TABLE_BASE + childPID*20;
 child_protable = PROCESS_TABLE+16*childPID;
 
 //----------allocate stack pages for child-------------------------
+backup;
 R1 = GET_FREE_PAGE;
 call MOD_2;
 [child_pt+16] = R0;
 [child_pt+17] = "0110";
+restore;
 
+backup;
 R1 = GET_FREE_PAGE;
 call MOD_2;
 [child_pt+18] = R0;
 [child_pt+19] = "0110";
+restore;
 //------------------------------------------------------------------
 
 //---------allocate user area page for child-------------------------
+backup;
 R1 = GET_FREE_PAGE;
 call MOD_2;
 
 [child_protable+11] = R0;
 child_user_area_page = R0;
+restore;
 //-------------------------------------------------------------------
 
 //------------copy the process table entries from parent-------------
@@ -117,8 +128,8 @@ endwhile;
 alias par_disk_table R13;
 alias child_disk_table R14;
 
-par_disk_table = [DISK_MAP_TABLE + [SYSTEM_STATUS_TABLE+1]*10];
-child_disk_table = [DISK_MAP_TABLE + childPID*10];
+par_disk_table = DISK_MAP_TABLE + [SYSTEM_STATUS_TABLE+1]*10;
+child_disk_table = DISK_MAP_TABLE + childPID*10;
 
 i = 2;
 while(i<=7) do
@@ -175,6 +186,8 @@ endwhile;
 //store the return values of fork call
 par_stack = [par_protable+13];
 child_stack = [child_protable+13];
+
+breakpoint;
 
 [[PTBR+2*(par_stack-1)/512]*512+(par_stack-1)%512] = childPID;
 [[child_pt+2*(child_stack-1)/512]*512+(child_stack-1)%512] = 0;

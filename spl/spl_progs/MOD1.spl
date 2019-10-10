@@ -152,6 +152,7 @@ if(R1 == FREE_PAGE_TABLE) then	// free page table
 endif;
 
 if(R1 == GET_PCB_ENTRY) then
+	multipush(R5);
 	alias i R5;
 	i = 0;
 	R0 = -1;
@@ -162,10 +163,11 @@ if(R1 == GET_PCB_ENTRY) then
 			[PROCESS_TABLE+16*i+1] = i;
 			[PROCESS_TABLE+16*i+14] = PAGE_TABLE_BASE+i*20;
 			[PROCESS_TABLE+16*i+15] = 10;
+			multipop(R5);
 			return;
 		endif;
 		i = i + 1;
 	endwhile;
-
+	multipop(R5);
 	return;
 endif;
