@@ -63,6 +63,7 @@ List mergeSort(List top)
         if(pid==-1) then	
           a=mergeSort(a);
           b=mergeSort(b);
+		breakpoint;
         else
           s.link=null;
 
@@ -137,9 +138,9 @@ int main()
     //Storing values in descending order
     head=null;
     counter=0;
-    while(counter<32) do
+    while(counter<64) do
       p=alloc();
-      p.data=32-counter;
+      p.data=64-counter;
       p.next=null;
 
       if(head==null) then

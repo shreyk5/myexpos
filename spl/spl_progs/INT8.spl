@@ -20,7 +20,7 @@ if(R0 == -1) then
 	//set the return value to -1
 	alias userSP R1;
 	userSP = [PROCESS_TABLE+[SYSTEM_STATUS_TABLE+1]*16+13];
-	[[PTBR+2*(userSP-1)/512]*512 + (userSP-1)%512] = -1;
+	[[PTBR+2*((userSP-1)/512)]*512 + (userSP-1)%512] = -1;
 	
 	//set mode flag to 0
 	[PROCESS_TABLE+[SYSTEM_STATUS_TABLE+1]*16+9] = 0;
@@ -91,8 +91,9 @@ R1 = GET_FREE_PAGE;
 call MOD_2;
 
 [child_protable+11] = R0;
-child_user_area_page = R0;
+//child_user_area_page = R0;
 restore;
+child_user_area_page = [child_protable+11];
 //-------------------------------------------------------------------
 
 //------------copy the process table entries from parent-------------
@@ -196,8 +197,8 @@ child_stack = [child_protable+13];
 
 //breakpoint;
 
-[[PTBR+2*(par_stack-1)/512]*512+(par_stack-1)%512] = childPID;
-[[child_pt+2*(child_stack-1)/512]*512+(child_stack-1)%512] = 0;
+[[PTBR+2*((par_stack-1)/512)]*512+(par_stack-1)%512] = childPID;
+[[child_pt+2*((child_stack-1)/512)]*512+(child_stack-1)%512] = 0;
 
 [PROCESS_TABLE+[SYSTEM_STATUS_TABLE+1]*16+9] = 0; //reset the mode flag of parent to 0
 
