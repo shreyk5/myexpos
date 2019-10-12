@@ -42,6 +42,8 @@ loadi(45,58);
 loadi(59,3);	//load inode table
 loadi(60,4);
 
+loadi(62,5);	//load root file
+
 loadi(6,19);	//load disk controller interrupt routine
 loadi(7,20);
 
@@ -62,6 +64,10 @@ loadi(29,42);
 loadi(30,43);	//load INT14
 loadi(31,44);
 
+loadi(10,23);	//load INT4
+loadi(11,24);
+
+
 //initialise memory free list
 alias i R1;
 i = 0;
@@ -74,6 +80,24 @@ while(i<128) do
 	endif;
 	i = i + 1;
 endwhile;
+
+//initialise file status table
+i = 0;
+while(i<MAX_FILE_NUM) do
+	[FILE_STATUS_TABLE + 4*i] = -1;	//locking PID
+	[FILE_STATUS_TABLE + 4*i + 1] = -1;	//file open count
+	i = i + 1;
+endwhile;
+
+//initialise buffer table
+i = 0;
+while(i<MAX_BUFFER) do
+	[BUFFER_TABLE + 4*i] = -1;	//block
+	[BUFFER_TABLE + 4*i + 1] = 0;	//dirty
+	[BUFFER_TABLE + 4*i + 2] = -1;	//locking PID
+	i = i + 1;
+endwhile;
+
 
 //initialise the semaphore table for all entries
 i = 0;
@@ -132,6 +156,7 @@ PTLR = 10;
 PTBR = PTBR - 20;
 
 [PROCESS_TABLE+16+1] = 1;
+[PROCESS_TABLE+16+3] = 1;	//set the userID to 1
 [PROCESS_TABLE+16+4] = CREATED;
 [PROCESS_TABLE+16+11] = 80;
 [PROCESS_TABLE+16+12] = 0;
