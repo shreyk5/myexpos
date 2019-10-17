@@ -12,14 +12,23 @@ if(R1 == FREE_USER_AREA_PAGE) then	// free user area page
 	alias user_area_page R6;
 	user_area_page = [PROCESS_TABLE + R2*16 + 11];
 	while(i<512) do
-		if([user_area_page*512 + i] == 1) then
+		if([user_area_page*512 + i] == SEMAPHORE) then
 			backup;
 			R1 = RELEASE_SEMAPHORE;
 			R3 = R2;	//PID of the process
 			R2 = [user_area_page*512 + i + 1];  //semaphore table index
 			call MOD_0;
 			restore;
-		endif; 
+		endif;
+
+		if([user_area_page*512 + i] == FILE) then
+			backup;
+			R1 = CLOSE;
+			R2 = [user_area_page*512 + i + 1];	//OPEN file table index
+			call MOD_3;
+			restore;
+		endif;
+
 		i = i + 2;
 	endwhile;
 	restore; 

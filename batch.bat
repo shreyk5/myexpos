@@ -21,7 +21,7 @@ load --module 4 ../spl/spl_progs/MOD4.xsm
 load --module 1 ../spl/spl_progs/MOD1.xsm
 load --module 2 ../spl/spl_progs/MOD2.xsm
 load --idle ../expl/samples/idle.xsm
-load --init ../expl/samples/createFile.xsm
+load --init ../expl/samples/shell_s21.xsm
 load --exec ../expl/samples/pid.xsm
 load --exec ../expl/samples/par_s22.xsm
 load --exec ../expl/samples/Odd.xsm

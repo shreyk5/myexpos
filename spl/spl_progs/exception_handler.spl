@@ -30,7 +30,7 @@ endif;
 //multipush(EC);
 //print EC;
 if(EC==2) then
-
+	print [PROCESS_TABLE+[SYSTEM_STATUS_TABLE+1]*16+13];
 	backup;
 	//print EIP;
 	print("IllAccess");
@@ -65,23 +65,28 @@ if(EC == 0) then
 	//print(EPN);
 	print "PFault";
 	if((EPN == 2) || (EPN == 3)) then
+		print "heap";
 		R1 = GET_FREE_PAGE;
 		call MOD_2;
 		[PTBR+4] = R0;
 		[PTBR+5] = "1110";
-	
+		//print R0;
+		
 		R1 = GET_FREE_PAGE;
 		call MOD_2;
 		[PTBR+6] = R0;
 		[PTBR+7] = "1110";
+		//print R0;
 	endif;
 
 	if((EPN==4) || (EPN==5) || (EPN==6) || (EPN==7)) then
+		print "code";
 		R1 = GET_CODE_PAGE;
 		R2 = [DISK_MAP_TABLE+[SYSTEM_STATUS_TABLE+1]*10+EPN];
 		breakpoint;
 		call MOD_2;
-			
+		
+		//print R0;		
 		[PTBR+EPN*2] = R0;
 		[PTBR+EPN*2+1] = "1100";
 	endif;

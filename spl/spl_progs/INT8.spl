@@ -123,7 +123,11 @@ while(i < 512) do
 	
 	if(((i%2) == 0) && ([par_user_area_page*512+i] == SEMAPHORE)) then
 		[SEMAPHORE_TABLE + 4*([par_user_area_page*512+i+1])+1] = [SEMAPHORE_TABLE + 4*([par_user_area_page*512+i+1])+1]+1; 
-	endif;	
+	endif;
+
+	if(((i%2) == 0) && ([par_user_area_page*512+i] == FILE)) then
+		[OPEN_FILE_TABLE + 4*([par_user_area_page*512+i+1])+1] = [OPEN_FILE_TABLE + 4*([par_user_area_page*512+i+1])+1]+1; 
+	endif;		
 		
 	i = i + 1;
 endwhile;
