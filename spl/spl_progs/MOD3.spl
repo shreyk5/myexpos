@@ -12,6 +12,7 @@ if(func == OPEN) then
 	alias inode_idx R4;
 	inode_idx = -1;
 	while(i<MAX_FILE_NUM) do
+		//print [INODE_TABLE + 16*i + 1];
 		if([INODE_TABLE + 16*i + 1] == fileName) then
 			inode_idx = i;
 			break;
@@ -19,7 +20,7 @@ if(func == OPEN) then
 		i = i + 1;
 	endwhile;
 
-	if(inode_idx == -1)	then //file is not present
+	if(inode_idx == -1) then //file is not present
 		R0 = -1;
 		return;
 	endif;
@@ -88,6 +89,7 @@ if(func == OPEN) then
 	R1 = RELEASE_INODE;
 	R2 = [SYSTEM_STATUS_TABLE +1];
 	R3 = inode_idx;
+	call MOD_0;
 
 	R0 = open_ft_idx;
 	return;
@@ -120,6 +122,61 @@ if(func == CLOSE) then
 		endif;
 	endif;
 	
+	return;
+endif;
+//----------------------------------------------------------------------------------------
+
+//--------------------------------------buffered read-------------------------------------
+//arguments are disk block num, offset, physical address
+//no return value
+if(func == BUFFERED_READ) then
+	alias block_num R2;
+	alias offset R3;
+	alias address R4;
+
+	alias buffer_num R5;
+	buffer_num = block_num % 4;
+
+	backup;
+	R1 = ACQUIRE_BUFFER;
+	R2 = buffer_num; 
+	R3 = [SYSTEM_STATUS_TABLE + 1];
+	call MOD_0;
+	restore;
+
+	if([BUFFER_TABLE + 4*buffer_num] != block_num) then
+		if([BUFFER_TABLE + 4*buffer_num + 1] == 1) then	//dirty bit is set(block was modified in buffer)
+			backup;
+			R1 = DISK_STORE;
+			R2 = [SYSTEM_STATUS_TABLE + 1];
+			R3 = 71 + buffer_num;
+			R4 = [BUFFER_TABLE + 4*buffer_num];
+			call MOD_4;
+			restore;
+
+			[BUFFER_TABLE + 4*buffer_num + 1] = 0;	//set the dirty bit to 0
+		endif;
+
+		backup;
+		R1 = DISK_LOAD;
+		R4 = block_num;
+		R2 = [SYSTEM_STATUS_TABLE + 1];
+		R3 = 71 + buffer_num;
+		call MOD_4;
+		restore;
+
+		[BUFFER_TABLE + 4*buffer_num] = block_num;		
+	endif;
+
+	[address] = [(71 + buffer_num)*512 + offset];
+
+	backup;
+	R1 = RELEASE_BUFFER;
+	R2 = buffer_num;
+	R3 = [SYSTEM_STATUS_TABLE + 1];
+	call MOD_0;
+	restore;
+
 	return;
 endif;
 //----------------------------------------------------------------------------------------

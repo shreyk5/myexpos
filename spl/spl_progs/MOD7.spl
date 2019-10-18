@@ -67,6 +67,11 @@ loadi(31,44);
 loadi(10,23);	//load INT4
 loadi(11,24);
 
+loadi(12,25);	//load INT5
+loadi(13,26);
+
+loadi(46,59);	//load MOD3
+loadi(47,60);
 
 //initialise memory free list
 alias i R1;
@@ -86,6 +91,14 @@ i = 0;
 while(i<MAX_FILE_NUM) do
 	[FILE_STATUS_TABLE + 4*i] = -1;	//locking PID
 	[FILE_STATUS_TABLE + 4*i + 1] = -1;	//file open count
+	i = i + 1;
+endwhile;
+
+//initialise open file table
+i = 0;
+while(i<MAX_OPENFILE_NUM) do
+	[OPEN_FILE_TABLE + 4*i + 0] = -1;	//inode index
+	[OPEN_FILE_TABLE + 4*i + 1] = 0;	//open instance count
 	i = i + 1;
 endwhile;
 

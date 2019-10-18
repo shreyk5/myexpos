@@ -14,7 +14,7 @@ alias syscall R6;
 syscall = [[PTBR + 2 * ((userSP - 5) / 512)] * 512 + (userSP - 5) % 512];
 
 alias retAddr R7;
-retAddr = [[PTBR + 2 * ((userSP - 1) / 512)] * 512 + (userSP - 1) % 512];
+retAddr = [PTBR + 2 * ((userSP - 1) / 512)] * 512 + (userSP - 1) % 512;
 
 //----------------------------------OPEN-------------------------------------------------
 //argument is filename
@@ -54,7 +54,7 @@ if (syscall == INT_OPEN) then
 		ireturn;
 	endif;
 
-
+	//print filename;
 	multipush(R4,R5,R6,R7,R8,R9,R10,R11);
 	R1 = OPEN;		//return open file table entry
 	R2 = filename;
@@ -65,6 +65,7 @@ if (syscall == INT_OPEN) then
 	file_table_idx = R0;
 
 	if(file_table_idx == -1) then	//if file type is of EXEC
+		print "hi";
 		[retAddr] = -1;
 		SP = [protable + 13];
 		[protable + 9] = 0;
