@@ -105,3 +105,22 @@ if(R1 == RELEASE_BLOCK) then
 	[DISK_FREE_LIST+R2] = [DISK_FREE_LIST+R2]-1;
 	return;
 endif;
+
+if(R1 == GET_FREE_BLOCK) then
+	alias i R0;
+ 	i = DISK_FREE_AREA;
+
+ 	while(i < DISK_SWAP_AREA) do    //blocks from 69 to 255 are user blocks
+ 		if([DISK_FREE_LIST + i] == 0) then
+ 			[DISK_FREE_LIST + i] = 1;
+ 			break; 
+ 		endif;
+ 		i = i + 1;
+ 	endwhile;
+
+ 	if(i == DISK_SWAP_AREA) then
+ 		i = -1;
+ 	endif;
+
+ 	return;
+endif;

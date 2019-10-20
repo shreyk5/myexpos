@@ -181,4 +181,61 @@ if(func == BUFFERED_READ) then
 endif;
 //----------------------------------------------------------------------------------------
 
+//--------------------------------------buffered write-------------------------------------
+//arguments are disk block num, offset, word
+//no return value
+if(func == BUFFERED_WRITE) then
+	alias block_num R2;
+	alias offset R3;
+	alias word R4;
+
+	alias buffer_num R5;
+	buffer_num = block_num % 4;
+
+	backup;
+	R1 = ACQUIRE_BUFFER;
+	R2 = buffer_num; 
+	R3 = [SYSTEM_STATUS_TABLE + 1];
+	call MOD_0;
+	restore;
+
+	if([BUFFER_TABLE + 4*buffer_num] != block_num) then
+		if([BUFFER_TABLE + 4*buffer_num + 1] == 1) then	//dirty bit is set(block was modified in buffer)
+			backup;
+			R1 = DISK_STORE;
+			R2 = [SYSTEM_STATUS_TABLE + 1];
+			R3 = 71 + buffer_num;
+			R4 = [BUFFER_TABLE + 4*buffer_num];
+			call MOD_4;
+			restore;
+
+			[BUFFER_TABLE + 4*buffer_num + 1] = 0;	//set the dirty bit to 0
+		endif;
+
+		backup;
+		R1 = DISK_LOAD;
+		R4 = block_num;
+		R2 = [SYSTEM_STATUS_TABLE + 1];
+		R3 = 71 + buffer_num;
+		call MOD_4;
+		restore;
+
+		[BUFFER_TABLE + 4*buffer_num] = block_num;		
+	endif;
+
+	[(71 + buffer_num)*512 + offset] = word;
+	[BUFFER_TABLE + 4*buffer_num + 1] = 1;
+
+	backup;
+	R1 = RELEASE_BUFFER;
+	R2 = buffer_num;
+	R3 = [SYSTEM_STATUS_TABLE + 1];
+	call MOD_0;
+	restore;
+
+	return;
+endif;
+//----------------------------------------------------------------------------------------
+
+
 return;

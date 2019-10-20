@@ -8,12 +8,32 @@ userSP = [PROCESS_TABLE+[SYSTEM_STATUS_TABLE+1]*16+13];
 //Shutdown system call can be invoked only from the shell process of the root user
 
 if([PROCESS_TABLE + [SYSTEM_STATUS_TABLE+1]*16 + 1] != 1 || [PROCESS_TABLE + [SYSTEM_STATUS_TABLE+1]*16 + 3] != 1) then
-	[[PTBR+2*((userSP-1)/512)]*512 + (userSP-1)%512] = -1;	//not allowed	
-	[PROCESS_TABLE+[SYSTEM_STATUS_TABLE+1]*16+9] = 0;	//set mode flag to 0
+	[[PTBR + 2*((userSP-1)/512)]*512 + (userSP-1) % 512] = -1;	//not allowed	
+	[PROCESS_TABLE + [SYSTEM_STATUS_TABLE+1]*16 + 9] = 0;	//set mode flag to 0
 	SP = userSP;
 
 	ireturn;
 endif;
+
+backup;
+R1 = KILL_ALL;
+R2 = [SYSTEM_STATUS_TABLE + 1];
+call MOD_1;
+restore;
+
+alias i R7;
+i = 0;
+
+while(i < 4) do
+	if([BUFFER_TABLE + 4*i + 1] == 1) then
+		R1 = DISK_STORE;
+		R2 = [SYSTEM_STATUS_TABLE + 1];
+		R3 = (71 + i);
+		R4 = [BUFFER_TABLE + 4*i];
+		call MOD_4;
+	endif;
+	i = i + 1;
+endwhile;
 
 alias page_num R5;
 alias block_num R6;

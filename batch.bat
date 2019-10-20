@@ -32,3 +32,12 @@ load --exec ../expl/samples/childS22.xsm
 load --exec ../expl/samples/MS1.xsm
 load --exec ../expl/samples/MS2.xsm
 load --exec ../expl/samples/asg1_s24.xsm
+load --exec ../expl/samples/asg1_s25.xsm
+load --exec ../expl/samples/asg2_s25.xsm
+load --exec ../expl/samples/asg3_s25.xsm
+load --exec ../expl/samples/asg4_s25.xsm
+load --exec ../expl/samples/ls.xsm
+load --exec ../expl/samples/rm.xsm
+load --exec ../expl/samples/cp.xsm
+load --exec ../expl/samples/cat.xsm
+load --data ../sample.dat

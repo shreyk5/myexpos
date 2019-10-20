@@ -19,7 +19,7 @@ begin
 		//temp = exposcall("Shutdown");
                 temp = exposcall("Wait",pid);
 		msg = "Child completed";
-		temp = exposcall("Write",-2,msg);
+		//temp = exposcall("Write",-2,msg);
             else
                 temp = exposcall("Exec",input);
                 if(temp != 0) then

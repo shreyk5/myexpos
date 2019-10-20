@@ -180,3 +180,40 @@ if(R1 == GET_PCB_ENTRY) then
 	multipop(R5);
 	return;
 endif;
+
+if(R1 == KILL_ALL) then
+	alias curr_pid R2;
+	
+	alias i R6;
+	i = 0;
+	while(i < MAX_FILE_NUM) do
+		R1 = ACQUIRE_INODE;
+		R2 = curr_pid;
+		R3 = i;
+		call MOD_0;
+		i = i + 1;
+	endwhile;
+
+	i = 2;
+	while(i<16) do
+		if(i != curr_pid && [PROCESS_TABLE + 16*i + 4] != TERMINATED) then
+			backup;
+			R1 = EXIT_PROCESS;
+			R2 = i;
+			call MOD_1;
+			restore;
+		endif;
+		i = i + 1;
+	endwhile;
+
+	i = 0;
+	while(i < MAX_FILE_NUM) do
+		R1 = RELEASE_INODE;
+		R2 = curr_pid;
+		R3 = i;
+		call MOD_0;
+		i = i + 1;
+	endwhile;
+
+	return;
+endif;

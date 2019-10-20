@@ -30,9 +30,9 @@ endif;
 //multipush(EC);
 //print EC;
 if(EC==2) then
-	print [PROCESS_TABLE+[SYSTEM_STATUS_TABLE+1]*16+13];
-	backup;
+	//print [PROCESS_TABLE+[SYSTEM_STATUS_TABLE+1]*16+13];
 	//print EIP;
+	backup;
 	print("IllAccess");
 	R1 = EXIT_PROCESS;
 	R2 = [SYSTEM_STATUS_TABLE+1];
@@ -61,9 +61,8 @@ if(EC == 3) then
 endif;
 
 if(EC == 0) then
-	//print(EC);
-	//print(EPN);
-	print "PFault";
+	
+	//print "PFault";
 	if((EPN == 2) || (EPN == 3)) then
 		print "heap";
 		R1 = GET_FREE_PAGE;
