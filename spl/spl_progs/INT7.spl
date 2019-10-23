@@ -22,7 +22,7 @@ if (file_descriptor != -2) then
 	alias userAreaPage R9;
 	userAreaPage = [PROCESS_TABLE + [SYSTEM_STATUS_TABLE + 1]*16 + 11];
 
-	if(file_descriptor<0 || file_descriptor>=7 || [userAreaPage*512 + 496 + 2*file_descriptor] != FILE) then
+	if(file_descriptor<0 || file_descriptor>=8 || [userAreaPage*512 + 496 + 2*file_descriptor] != FILE) then
 		[physicalAddrRetVal] = -1;
 		[PROCESS_TABLE + [SYSTEM_STATUS_TABLE+1]*16 + 9] = 0;	//reset the mode flag
 		SP = user_sp;
