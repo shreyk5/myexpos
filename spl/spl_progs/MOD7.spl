@@ -2,7 +2,7 @@ loadi(63,13);	//load library code
 loadi(64,14);
 
 loadi(65,7);	//load INIT program
-loadi(66,8);
+//loadi(66,8);	//no need
 
 loadi(22,35);	//load INT10 module
 loadi(23,36);
@@ -73,12 +73,24 @@ loadi(13,26);
 loadi(46,59);	//load MOD3
 loadi(47,60);
 
+loadi(26,39);	//load INT12
+loadi(27,40);
+
+loadi(34,47);	//load INT16
+loadi(35,48);
+
+loadi(36,49);	//load INT17
+loadi(37,50);
+
+loadi(67,9);	//load shell
+loadi(68,10);
+
 //initialise memory free list
 alias i R1;
 i = 0;
 
 while(i<128) do
-	if(i<=82) then
+	if(i<=80) then
 		[MEMORY_FREE_LIST+i] = 1;
 	else
 		[MEMORY_FREE_LIST+i] = 0;
@@ -133,9 +145,9 @@ while(i<16) do
 endwhile;
 
 [SYSTEM_STATUS_TABLE+3] = 0;	//wait_mem_count
-[SYSTEM_STATUS_TABLE+2] = 45;	//mem_free_count
+[SYSTEM_STATUS_TABLE+2] = 47;	//mem_free_count
 
-//-----------------set page table entries for INIT program--------------------
+//-----------------set page table entries for INIT(Login) program--------------------
 PTBR = PAGE_TABLE_BASE + 20;
 PTLR = 10;
 
@@ -146,59 +158,113 @@ PTLR = 10;
 [PTBR+3] = "0100";
 
 //HEAP
-[PTBR+4] = 78;
-[PTBR+5] = "0110";
-[PTBR+6] = 79;
-[PTBR+7] = "0110";
+[PTBR+4] = -1;
+[PTBR+5] = "0000";
+[PTBR+6] = -1;
+[PTBR+7] = "0000";
 
 //CODE
 [PTBR+8] = 65;
 [PTBR+9] = "0100";
-[PTBR+10] = 66;
+[PTBR+10] = -1;
+[PTBR+11] = "0000";
+[PTBR+12] = -1;
+[PTBR+13] = "0000";
+[PTBR+14] = -1;
+[PTBR+15] = "0000";
+
+[PTBR+16] = 66;
+[PTBR+17] = "0110";
+[PTBR+18] = -1;
+[PTBR+19] = "0000";
+
+PTBR = PTBR - 20;
+
+[PROCESS_TABLE+17] = 1;
+[PROCESS_TABLE+19] = KERNEL;	//login process is considered as kernel process
+[PROCESS_TABLE+20] = CREATED;
+[PROCESS_TABLE+27] = 77;
+[PROCESS_TABLE+28] = 0;
+[PROCESS_TABLE+29] = 8*512;
+[PROCESS_TABLE+30] = PAGE_TABLE_BASE+20;
+[PROCESS_TABLE+31] = 10;
+
+[66*512] = [65*512+1];
+
+//initialise resource table entries
+i = 510;
+while(i>=496) do
+	[77*512+i] = -1;
+	i = i - 2;
+endwhile;
+
+//-----------------set page table entries for Shell program--------------------
+PTBR = PAGE_TABLE_BASE + 40;
+PTLR = 10;
+
+//LIBRARY
+[PTBR+0] = 63;
+[PTBR+1] = "0100";
+[PTBR+2] = 64;
+[PTBR+3] = "0100";
+
+//HEAP
+[PTBR+4] = -1;
+[PTBR+5] = "0000";
+[PTBR+6] = -1;
+[PTBR+7] = "0000";
+
+//CODE
+[PTBR+8] = 67;
+[PTBR+9] = "0100";
+[PTBR+10] = 68;
 [PTBR+11] = "0100";
 [PTBR+12] = -1;
 [PTBR+13] = "0000";
 [PTBR+14] = -1;
 [PTBR+15] = "0000";
 
-[PTBR+16] = 76;
+[PTBR+16] = 78;
 [PTBR+17] = "0110";
-[PTBR+18] = 77;
+[PTBR+18] = 79;
 [PTBR+19] = "0110";
 
-PTBR = PTBR - 20;
+PTBR = PTBR - 40;
 
-[PROCESS_TABLE+16+1] = 1;
-[PROCESS_TABLE+16+3] = 1;	//set the userID to 1
-[PROCESS_TABLE+16+4] = CREATED;
-[PROCESS_TABLE+16+11] = 80;
-[PROCESS_TABLE+16+12] = 0;
-[PROCESS_TABLE+16+13] = 8*512;
-[PROCESS_TABLE+16+14] = PTBR+20;
-[PROCESS_TABLE+16+15] = 10;
+[PROCESS_TABLE + 32 + 1] = 2;
+[PROCESS_TABLE + 32 + 2] = 1;
+[PROCESS_TABLE + 32 + 3] = ROOT;	//shell process is owned by root
+[PROCESS_TABLE + 32 + 4] = TERMINATED;
+[PROCESS_TABLE + 32 + 11] = 80;
+[PROCESS_TABLE + 32 + 12] = 0;
+[PROCESS_TABLE + 32 + 13] = 8*512;
+[PROCESS_TABLE + 32 + 14] = PAGE_TABLE_BASE + 40;
+[PROCESS_TABLE + 32 + 15] = 10;
 
-[76*512] = [65*512+1];
+[78*512] = [67*512+1];
 
-//initialise the disk map table entries
-i = 0;
-while(i<10) do
-	[DISK_MAP_TABLE + 10 + i] = -1;
-	if(i==4) then
-		[DISK_MAP_TABLE + 10 + i] = 7;
-	endif;
-	
-	if(i==5) then
-		[DISK_MAP_TABLE + 10 + i] = 8;
-	endif;
-	i = i + 1;
-endwhile;
-
-//initialise resource table of init process
+//initialise resource table of shell process
 i = 510;
 
 while(i>=496) do
 	[80*512+i] = -1;
 	i = i - 2;
+endwhile;
+
+//initialise the disk map table entries
+alias disk_map_table R2;
+disk_map_table = DISK_MAP_TABLE + 20; 
+i = 0;
+while(i<10) do
+	[disk_map_table + i] = -1;
+	if(i==4) then
+		[disk_map_table + i] = 9;
+	endif;
+	
+	if(i==5) then
+		[disk_map_table + i] = 10;
+	endif;
+	i = i + 1;
 endwhile;
 
 return;

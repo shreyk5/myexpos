@@ -7,7 +7,7 @@ userSP = [PROCESS_TABLE+[SYSTEM_STATUS_TABLE+1]*16+13];
 	
 //Shutdown system call can be invoked only from the shell process of the root user
 
-if([PROCESS_TABLE + [SYSTEM_STATUS_TABLE+1]*16 + 1] != 1 || [PROCESS_TABLE + [SYSTEM_STATUS_TABLE+1]*16 + 3] != 1) then
+if([PROCESS_TABLE + [SYSTEM_STATUS_TABLE+1]*16 + 1] != 2 || [PROCESS_TABLE + [SYSTEM_STATUS_TABLE+1]*16 + 3] != 1) then
 	[[PTBR + 2*((userSP-1)/512)]*512 + (userSP-1) % 512] = -1;	//not allowed	
 	[PROCESS_TABLE + [SYSTEM_STATUS_TABLE+1]*16 + 9] = 0;	//set mode flag to 0
 	SP = userSP;
