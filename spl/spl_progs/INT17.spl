@@ -73,7 +73,7 @@ endif;
 
 //set the login process to wait for this shell
 [PROCESS_TABLE + 1*16 + 4] = WAIT_PROCESS;
-[PROCESS_TABLE + 2*16 + 5] = 2;
+[PROCESS_TABLE + 1*16 + 5] = 2;
 
 //set the current userID in system status table
 [SYSTEM_STATUS_TABLE] = userID;

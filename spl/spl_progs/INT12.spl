@@ -16,7 +16,7 @@ userSP = SP;
 SP = [PROCESS_TABLE + curr_pid * 16 + 11] * 512 - 1;	//change to kernel stack
 
 alias RetAddr R7;
-RetAddr = [PTBR + 2 * ((userSP - 1) % 512)] * 512 + (userSP - 1) % 512;
+RetAddr = [PTBR + 2 * ((userSP - 1) / 512)] * 512 + (userSP - 1) % 512;
 
 if(curr_pid != 2) then	//curr process is not shell
 	[RetAddr] = -1;	
