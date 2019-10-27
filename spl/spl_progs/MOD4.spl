@@ -58,7 +58,13 @@ if(functionNum == DISK_LOAD) then
 	[DISK_STATUS_TABLE+1] = 0;	//load operation
 	[DISK_STATUS_TABLE+2] = page_num;
 	[DISK_STATUS_TABLE+3] = block_num;
-	
+	// backup;
+	// if(block_num == -1) then
+	// 	print "load";
+	// 	print [PROCESS_TABLE + curr_pid*16 + 9];
+	// 	print block_num;
+	// endif;
+	// restore;
 	load(page_num,block_num);
 	
 	[PROCESS_TABLE+curr_pid*16+4] = WAIT_DISK;
@@ -84,7 +90,13 @@ if(functionNum == DISK_STORE) then
 	[DISK_STATUS_TABLE+1] = 1;	//store operation
 	[DISK_STATUS_TABLE+2] = page_num;
 	[DISK_STATUS_TABLE+3] = block_num;
-	
+	// backup;
+	// if(block_num == -1) then
+	// 	print "store";
+	// 	print [PROCESS_TABLE + curr_pid*16 + 9];
+	// 	print block_num;
+	// endif;
+	// restore;
 	store(page_num,block_num);
 	
 	[PROCESS_TABLE+curr_pid*16+4] = WAIT_DISK;

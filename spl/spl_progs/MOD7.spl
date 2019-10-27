@@ -85,12 +85,15 @@ loadi(37,50);
 loadi(67,9);	//load shell
 loadi(68,10);
 
+loadi(52,65);	//load MOD6
+loadi(53,66);
+
 //initialise memory free list
 alias i R1;
 i = 0;
 
 while(i<128) do
-	if(i<=80) then
+	if(i<=82) then
 		[MEMORY_FREE_LIST+i] = 1;
 	else
 		[MEMORY_FREE_LIST+i] = 0;
@@ -101,25 +104,31 @@ endwhile;
 //initialise file status table
 i = 0;
 while(i<MAX_FILE_NUM) do
-	[FILE_STATUS_TABLE + 4*i] = -1;	//locking PID
-	[FILE_STATUS_TABLE + 4*i + 1] = -1;	//file open count
+	alias file_status_table R2;
+	file_status_table = FILE_STATUS_TABLE + 4*i; 
+	[file_status_table] = -1;	//locking PID
+	[file_status_table + 1] = -1;	//file open count
 	i = i + 1;
 endwhile;
 
 //initialise open file table
 i = 0;
 while(i<MAX_OPENFILE_NUM) do
-	[OPEN_FILE_TABLE + 4*i + 0] = -1;	//inode index
-	[OPEN_FILE_TABLE + 4*i + 1] = 0;	//open instance count
+	alias open_file_table R3;
+	open_file_table = OPEN_FILE_TABLE + 4*i; 
+	[open_file_table + 0] = -1;	//inode index
+	[open_file_table + 1] = 0;	//open instance count
 	i = i + 1;
 endwhile;
 
 //initialise buffer table
 i = 0;
 while(i<MAX_BUFFER) do
-	[BUFFER_TABLE + 4*i] = -1;	//block
-	[BUFFER_TABLE + 4*i + 1] = 0;	//dirty
-	[BUFFER_TABLE + 4*i + 2] = -1;	//locking PID
+	alias buffer_table R4;
+	buffer_table = BUFFER_TABLE + 4*i;
+	[buffer_table] = -1;	//block
+	[buffer_table + 1] = 0;	//dirty
+	[buffer_table + 2] = -1;	//locking PID
 	i = i + 1;
 endwhile;
 
@@ -128,8 +137,10 @@ endwhile;
 i = 0;
 
 while(i < MAX_SEM_COUNT) do
-	[SEMAPHORE_TABLE + 4*i + 0] = -1;
-	[SEMAPHORE_TABLE + 4*i + 1] = 0;
+	alias semaphore_table R5;
+	semaphore_table = SEMAPHORE_TABLE + 4*i; 
+	[semaphore_table + 0] = -1;
+	[semaphore_table + 1] = 0;
 	i = i + 1;	
 endwhile;
 
@@ -140,12 +151,18 @@ endwhile;
 i = 0;
 
 while(i<16) do
-	[PROCESS_TABLE+i*16+4] = TERMINATED;
+	alias protable R6;
+	protable = PROCESS_TABLE + i*16;
+	[protable + 4] = TERMINATED;
+	[protable + 6] = 0;
+	[protable + 0] = 0;	//tick field
 	i = i + 1;
 endwhile;
 
-[SYSTEM_STATUS_TABLE+3] = 0;	//wait_mem_count
-[SYSTEM_STATUS_TABLE+2] = 47;	//mem_free_count
+[SYSTEM_STATUS_TABLE + 3] = 0;	//wait_mem_count
+[SYSTEM_STATUS_TABLE + 2] = 45;	//mem_free_count
+[SYSTEM_STATUS_TABLE + 5] = 0;	//paging status
+[SYSTEM_STATUS_TABLE + 4] = 0;	//number of processes which are swapped
 
 //-----------------set page table entries for INIT(Login) program--------------------
 PTBR = PAGE_TABLE_BASE + 20;
@@ -231,15 +248,15 @@ PTLR = 10;
 
 PTBR = PTBR - 40;
 
-[PROCESS_TABLE + 32 + 1] = 2;
-[PROCESS_TABLE + 32 + 2] = 1;
-[PROCESS_TABLE + 32 + 3] = ROOT;	//shell process is owned by root
-[PROCESS_TABLE + 32 + 4] = TERMINATED;
-[PROCESS_TABLE + 32 + 11] = 80;
-[PROCESS_TABLE + 32 + 12] = 0;
-[PROCESS_TABLE + 32 + 13] = 8*512;
-[PROCESS_TABLE + 32 + 14] = PAGE_TABLE_BASE + 40;
-[PROCESS_TABLE + 32 + 15] = 10;
+[PROCESS_TABLE + 33] = 2;
+[PROCESS_TABLE + 34] = 1;
+[PROCESS_TABLE + 35] = ROOT;	//shell process is owned by root
+[PROCESS_TABLE + 36] = TERMINATED;
+[PROCESS_TABLE + 43] = 80;
+[PROCESS_TABLE + 44] = 0;
+[PROCESS_TABLE + 45] = 8*512;
+[PROCESS_TABLE + 46] = PAGE_TABLE_BASE + 40;
+[PROCESS_TABLE + 47] = 10;
 
 [78*512] = [67*512+1];
 

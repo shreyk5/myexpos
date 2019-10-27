@@ -142,10 +142,22 @@ par_disk_table = DISK_MAP_TABLE + [SYSTEM_STATUS_TABLE+1]*10;
 child_disk_table = DISK_MAP_TABLE + childPID*10;
 
 i = 2;
+if(childPID == 3) then
+print ":)";
+endif;
+
 while(i<=7) do
+
 	[child_disk_table+i] = [par_disk_table+i];
+	if(childPID == 3) then
+		print i;
+		print [child_disk_table+i];
+	endif;
 	i = i + 1;
 endwhile;
+if(childPID == 3) then
+	print ":(";
+endif;
 
 [child_disk_table+8] = -1;
 [child_disk_table+9] = -1;
@@ -174,7 +186,7 @@ alias child_stack R7;
 
 par_stack = [PTBR+16]*512;	//stack page 1
 child_stack = [child_pt+16]*512;
-breakpoint;
+//breakpoint;
 
 i = 0;
 while(i<512) do
@@ -185,7 +197,6 @@ endwhile;
 par_stack = [PTBR+18]*512;	//stack page 2
 child_stack = [child_pt+18]*512;
 
-breakpoint;
 i = 0;
 while(i<512) do
 	[child_stack+i] = [par_stack+i];

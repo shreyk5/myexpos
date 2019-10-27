@@ -124,3 +124,23 @@ if(R1 == GET_FREE_BLOCK) then
 
  	return;
 endif;
+
+if(R1 == GET_SWAP_BLOCK) then
+	//no argument
+	alias i R0;
+ 	i = DISK_SWAP_AREA;
+
+ 	while(i < DISK_SIZE) do    //blocks from 69 to 255 are user blocks
+ 		if([DISK_FREE_LIST + i] == 0) then
+ 			[DISK_FREE_LIST + i] = 1;
+ 			break; 
+ 		endif;
+ 		i = i + 1;
+ 	endwhile;
+
+ 	if(i == DISK_SIZE) then
+ 		i = -1;
+ 	endif;
+
+ 	return;
+endif;
