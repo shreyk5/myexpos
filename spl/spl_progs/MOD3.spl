@@ -11,8 +11,7 @@ if(func == OPEN) then
 	i = 0;
 	alias inode_idx R4;
 	inode_idx = -1;
-	while(i<MAX_FILE_NUM) do
-		//print [INODE_TABLE + 16*i + 1];
+	while(i < MAX_FILE_NUM) do
 		if([INODE_TABLE + 16*i + 1] == fileName) then
 			inode_idx = i;
 			break;
@@ -26,27 +25,34 @@ if(func == OPEN) then
 	endif;
 
 	//file is present
-	if([INODE_TABLE + 16*inode_idx] == EXEC) then
-		R0 = -1;
-		return;
-	endif;
+	// if([INODE_TABLE + 16*inode_idx] == EXEC) then
+	// 	R0 = -1;
+	// 	return;
+	// endif;
 
-	multipush(R1,R2,R3,R4);
+	backup;
 	R1 = ACQUIRE_INODE; 
 	R2 = [SYSTEM_STATUS_TABLE +1];
 	R3 = inode_idx;
 	call MOD_0;
-	multipop(R1,R2,R3,R4);
-
+	
 	if(R0 == -1) then	//locking fails
+		restore;
+		R0 = -1;
 		return;
 	endif;
 
+	restore;
+
 	if([INODE_TABLE + 16*inode_idx] == EXEC) then
 		//release inode
+		backup;
 		R1 = RELEASE_INODE;
 		R2 = [SYSTEM_STATUS_TABLE + 1];
 		R3 = inode_idx;
+		call MOD_0;
+		restore;
+
 		R0 = -1;
 		return;
 	endif;
@@ -64,18 +70,22 @@ if(func == OPEN) then
 	endwhile;
 
 	if(open_ft_idx == -1) then	//Reached maximum number of open files in the system
+		backup;
 		R1 = RELEASE_INODE;
 		R2 = [SYSTEM_STATUS_TABLE + 1];
 		R3 = inode_idx;
+		call MOD_0;
+		restore;
 
 		R0 = -2;
 		return;
 	endif;
 
-	if([INODE_TABLE + 16*inode_idx] == "root") then
+	if([INODE_TABLE + 16*inode_idx + 1] == "root") then
 		[OPEN_FILE_TABLE + 4*open_ft_idx] = INODE_ROOT;
 	else
 		[OPEN_FILE_TABLE + 4*open_ft_idx] = inode_idx;
+		
 		if([FILE_STATUS_TABLE + 4*inode_idx + 1] == -1) then
 			[FILE_STATUS_TABLE + 4*inode_idx + 1] = 1;
 		else
@@ -86,10 +96,12 @@ if(func == OPEN) then
 	[OPEN_FILE_TABLE + 4*open_ft_idx + 1] = 1;	//open instance count
 	[OPEN_FILE_TABLE + 4*open_ft_idx + 2] = 0;	//LSEEK
 
+	backup;
 	R1 = RELEASE_INODE;
 	R2 = [SYSTEM_STATUS_TABLE +1];
 	R3 = inode_idx;
 	call MOD_0;
+	restore;
 
 	R0 = open_ft_idx;
 	return;
@@ -103,6 +115,8 @@ endif;
 //no return value
 if(func == CLOSE) then
 	//decrement open instance count in open file table
+	backup;
+
 	alias open_ft_idx R2;
 	[OPEN_FILE_TABLE + 4*open_ft_idx + 1] = [OPEN_FILE_TABLE + 4*open_ft_idx + 1] - 1;
 
@@ -111,9 +125,12 @@ if(func == CLOSE) then
 
 	if([OPEN_FILE_TABLE + 4*open_ft_idx + 1] == 0) then
 		//invalidate the open table entry
+		[OPEN_FILE_TABLE + 4*open_ft_idx + 0] = -1;
 		[OPEN_FILE_TABLE + 4*open_ft_idx + 1] = -1;
-
-		if([INODE_TABLE + 16*inode_idx] != "root") then
+		[OPEN_FILE_TABLE + 4*open_ft_idx + 2] = -1;
+		[OPEN_FILE_TABLE + 4*open_ft_idx + 3] = -1;
+		
+		if([INODE_TABLE + 16*inode_idx + 1] != "root") then
 			[FILE_STATUS_TABLE + 4*inode_idx + 1] = [FILE_STATUS_TABLE + 4*inode_idx + 1] - 1;
 		endif;
 
@@ -121,7 +138,8 @@ if(func == CLOSE) then
 			[FILE_STATUS_TABLE + 4*inode_idx + 1] = -1;
 		endif;
 	endif;
-	
+
+	restore;
 	return;
 endif;
 //----------------------------------------------------------------------------------------
@@ -130,6 +148,8 @@ endif;
 //arguments are disk block num, offset, physical address
 //no return value
 if(func == BUFFERED_READ) then
+	backup;
+	
 	alias block_num R2;
 	alias offset R3;
 	alias address R4;
@@ -177,6 +197,7 @@ if(func == BUFFERED_READ) then
 	call MOD_0;
 	restore;
 
+	restore;
 	return;
 endif;
 //----------------------------------------------------------------------------------------
@@ -185,6 +206,8 @@ endif;
 //arguments are disk block num, offset, word
 //no return value
 if(func == BUFFERED_WRITE) then
+	backup;
+
 	alias block_num R2;
 	alias offset R3;
 	alias word R4;
@@ -233,6 +256,7 @@ if(func == BUFFERED_WRITE) then
 	call MOD_0;
 	restore;
 
+	restore;
 	return;
 endif;
 //----------------------------------------------------------------------------------------

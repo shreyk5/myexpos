@@ -1,4 +1,3 @@
-//breakpoint;
 //set the mode flag to -1
 [PROCESS_TABLE+[SYSTEM_STATUS_TABLE+1]*16+9] = -1;
 
@@ -7,10 +6,6 @@
 SP = [PROCESS_TABLE+[SYSTEM_STATUS_TABLE+1]*16+11]*512-1;
 backup;
 multipush(EIP);
-
-//breakpoint;
-//multipush(EC);
-//print EC;
 
 if(EC==1) then
 	backup;
@@ -21,14 +16,8 @@ if(EC==1) then
 	restore;
 	call MOD_5;
 endif;
-//multipop(EC);
 
-//breakpoint;
-//multipush(EC);
-//print EC;
 if(EC==2) then
-	//print [PROCESS_TABLE+[SYSTEM_STATUS_TABLE+1]*16+13];
-	//print EIP;
 	backup;
 	print("IllAccess");
 	R1 = EXIT_PROCESS;
@@ -38,14 +27,7 @@ if(EC==2) then
 	
 	call MOD_5;
 endif;
-//multipop(EC);
 
-//backup;
-//breakpoint;
-//print EC;
-//restore;
-
-//breakpoint;
 if(EC == 3) then
 	backup;	
 	print("Arithmet");
@@ -66,29 +48,24 @@ if(EC == 0) then
 		call MOD_2;
 		[PTBR+4] = R0;
 		[PTBR+5] = "1110";
-		//print R0;
 		
 		R1 = GET_FREE_PAGE;
 		call MOD_2;
 		[PTBR+6] = R0;
 		[PTBR+7] = "1110";
-		//print R0;
 	endif;
 
 	if((EPN==4) || (EPN==5) || (EPN==6) || (EPN==7)) then
-		// backup;
-		// print "code";
-		// print [SYSTEM_STATUS_TABLE + 1];
-		// print [PROCESS_TABLE + [SYSTEM_STATUS_TABLE + 1]*16 + 6];
-		// print EPN;
-		// restore;
+		backup;
+		multipush(EC,EIP,EPN,EMA);
 		R1 = GET_CODE_PAGE;
 		R2 = [DISK_MAP_TABLE+[SYSTEM_STATUS_TABLE+1]*10+EPN];
 		call MOD_2;
-		
-		//print R0;		
+		multipop(EC,EIP,EPN,EMA);	
+				
 		[PTBR+EPN*2] = R0;
 		[PTBR+EPN*2+1] = "1100";
+		restore;
 	endif;
 
 endif;

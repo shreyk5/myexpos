@@ -29,6 +29,7 @@ if(R1 == FREE_USER_AREA_PAGE) then	// free user area page
 			restore;
 		endif;
 
+		[user_area_page*512 + i] = -1;
 		i = i + 2;
 	endwhile;
 	restore; 

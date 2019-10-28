@@ -39,7 +39,9 @@ else
 	endwhile;
 endif;
 
-//print new_pid;
+if([SYSTEM_STATUS_TABLE+5]!=0) then
+print new_pid;
+endif;
 
 //change the SP to kernel stack of new process
 SP = [PROCESS_TABLE + 16*new_pid + 11]*512 + [PROCESS_TABLE + 16*new_pid + 12]; 
