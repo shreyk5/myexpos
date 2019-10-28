@@ -26,7 +26,7 @@ i = 0;
 
 // Search for the fileName in the copy of INODE TABLE present in page 59
 while(i < MAX_FILE_NUM) do
-	if([INODE_TABLE+i*16]==EXEC && [INODE_TABLE + i*16 + 1] == fileName) then
+	if([INODE_TABLE + i*16] == EXEC && [INODE_TABLE + i*16 + 1] == fileName) then
 		present = 1;
 		Inode_Index = i;
 		break;
@@ -35,7 +35,8 @@ while(i < MAX_FILE_NUM) do
 endwhile;
 
 if(present == 0) then
-	[[PTBR+2*((userSP-1)/512)]*512+ (userSP-1)%512] = -1;
+	[PROCESS_TABLE+[SYSTEM_STATUS_TABLE+1]*16+9] = 0;	//reset the mode flag
+	[[PTBR + 2*((userSP-1)/512)]*512+ (userSP-1)%512] = -1;
 	SP = userSP;
 	ireturn;
 endif;
@@ -79,31 +80,27 @@ PTBR = PAGE_TABLE_BASE + 20*[SYSTEM_STATUS_TABLE+1];
 [PTBR+3] = "0100";
 
 //invalidate heap pages
-backup;
-
-//R1 = 1;
-//call MOD_2;
 [PTBR+4] = -1;
 [PTBR+5] = "0000";
 
-//R1 = 1;
-//call MOD_2;
 [PTBR+6] = -1;
 [PTBR+7] = "0000";
 
 //allocate stack pages
+backup;
 R1 = 1;
 call MOD_2;
 [PTBR+16] = R0;
 //print (PTBR+16);
 breakpoint;
 [PTBR+17] = "0110";
+restore;
 
+backup;
 R1 = 1;
 call MOD_2;
 [PTBR+18] = R0;
 [PTBR+19] = "0110";
-
 restore;
 
 alias inode R6;

@@ -148,7 +148,7 @@ if(func == SWAP_IN) then
 	max_tick = 0;
 
 	i = 3;
-	while(i<16) do
+	while(i<15) do
 		alias protable R8;
 		protable = PROCESS_TABLE + 16*i;
 		if([protable + 6] == 1 && ([protable] > max_tick)) then
@@ -171,6 +171,8 @@ if(func == SWAP_IN) then
 	swap_protable = PROCESS_TABLE + swap_in_pid*16;
 	swap_pageTable = PAGE_TABLE_BASE + 20*swap_in_pid;
 	disk_map_table = DISK_MAP_TABLE + 10*swap_in_pid;
+
+	[swap_protable] = 0;	//set the tick field to 0
 
 	i = 2;
 	while(i<10) do

@@ -36,7 +36,7 @@ else	//swapping is not on now check if it should be initiated
 
 		if([SYSTEM_STATUS_TABLE + 4] != 0) then	//there are swapped out processes
 			i = 3;
-			while(i<16) do
+			while(i<15) do
 				alias protable R7;
 				protable = PROCESS_TABLE + 16*i;
 				if([protable + 6] == 1 && [protable] > MAX_TICK) then	//process is swapped out and has been in swapped out state for a long time
@@ -46,7 +46,7 @@ else	//swapping is not on now check if it should be initiated
 				i = i + 1;
 			endwhile;
 
-			if(i==16 && [SYSTEM_STATUS_TABLE + 2] > MEM_HIGH) then	//lot of free memory pages
+			if(i==15 && [SYSTEM_STATUS_TABLE + 2] > MEM_HIGH) then	//lot of free memory pages
 				[SYSTEM_STATUS_TABLE + 5] = SWAP_IN;
 			endif;
 		endif;

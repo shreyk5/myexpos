@@ -93,6 +93,7 @@ PTLR = 10;
 alias protable R5;
 protable = PROCESS_TABLE + SWAPPER_DAEMON*16;
 
+[protable + 0] = 0;	//tick;
 [protable + 1] = 15;		//pid
 [protable + 3] = KERNEL;
 [protable + 4] = CREATED;	//state
