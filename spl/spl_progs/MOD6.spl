@@ -41,7 +41,7 @@ if(func == SWAP_OUT) then
  		max_tick = 0;
 
  		i = 3;
- 		while(i < 15) do
+ 		while(i < 16) do
  			protable = PROCESS_TABLE + 16*i;
  			alias state R9;
  		  	state = [protable + 4]; 
@@ -77,7 +77,7 @@ if(func == SWAP_OUT) then
 
  	[swap_protable] = 0;	//set the tick field to 0
 
- 	//iterate through the page table entries to invalidate the 
+ 	//iterate through the page table entries to check if heap and stack can be deallocated
 
  	i = 4;
  	while(i<20) do
@@ -107,26 +107,25 @@ if(func == SWAP_OUT) then
  			R4 = block;
  			call MOD_4;
  			restore;
+
+ 			backup;
+ 			R1 = RELEASE_PAGE;
+ 			R2 = page;
+ 			call MOD_2;
+ 			restore;
+ 			
+ 			[swap_pageTable + i] = -1;
+ 			[swap_pageTable + i + 1] = "0000";
+
  		endif;
 
- 		backup;
- 		R1 = RELEASE_PAGE;
- 		R2 = page;
- 		call MOD_2;
- 		restore;
-
- 		[swap_pageTable + i] = -1;
- 		[swap_pageTable + i + 1] = "0000";
  		i = i + 2;	
  	endwhile;
 
  	[SYSTEM_STATUS_TABLE + 4] = [SYSTEM_STATUS_TABLE + 4] + 1;	//increment swapped out count
  	[SYSTEM_STATUS_TABLE + 5] = 0;	//reset the PAGING_STATUS
  	[swap_protable + 6] = 1;
- 	// print "swapped:";
- 	// print swap_out_pid;
- 	//print [SYSTEM_STATUS_TABLE + 2];
- 	//print "hi";
+ 	
  	return;	
 
 endif;
@@ -211,9 +210,6 @@ if(func == SWAP_IN) then
 		call MOD_2;
 		restore;
 
-		// if(!(i == 8 && page == -1)) then
-		// 	print "success";
-		// endif;
 		[swap_pageTable + 2*i] = page;
 		[swap_pageTable + 2*i + 1] = "0110";
 

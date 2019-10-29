@@ -30,8 +30,8 @@ if([SYSTEM_STATUS_TABLE + 5] != 0) then	//swapping is initiated
 else	//swapping is not on now check if it should be initiated
 
 	if([SYSTEM_STATUS_TABLE + 2] < MEM_LOW) then
-		print "Alert";
-		print [SYSTEM_STATUS_TABLE + 2];
+		// print "Alert";
+		// print [SYSTEM_STATUS_TABLE + 2];
 		[SYSTEM_STATUS_TABLE + 5] = SWAP_OUT;	//swap out is needed
 	else
 

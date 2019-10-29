@@ -20,11 +20,11 @@ if([SYSTEM_STATUS_TABLE + 5] != 0) then	//swapping is going on
 	alias daemon_protable R3;
 	daemon_protable = PROCESS_TABLE + 15*16;
 
-	if([daemon_protable + 4] == WAIT_DISK) then
-		new_pid = 0;
+	if(([daemon_protable + 4] == READY) || ([daemon_protable + 4] == CREATED) || ([daemon_protable + 4] == RUNNING)) then
+		new_pid = 15;
 		//print "waitdaemon";
 	else
-		new_pid = 15;
+		new_pid = 0;
 	endif;
 	
 else
@@ -39,9 +39,6 @@ else
 	endwhile;
 endif;
 
-if([SYSTEM_STATUS_TABLE+5]!=0) then
-print new_pid;
-endif;
 
 //change the SP to kernel stack of new process
 SP = [PROCESS_TABLE + 16*new_pid + 11]*512 + [PROCESS_TABLE + 16*new_pid + 12]; 

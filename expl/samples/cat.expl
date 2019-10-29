@@ -9,6 +9,10 @@ int main()
 		tmp = exposcall("Read",-1,fileName);
 		fileDesc = exposcall("Open",fileName);
 
+		if(fileDesc == -1) then
+			tmp = exposcall("Write",-2,"NoFile");			
+		
+		else
 		while(1 == 1) do
 			tmp = exposcall("Read",fileDesc,word);
 
@@ -20,6 +24,7 @@ int main()
 		endwhile;
 
 		tmp = exposcall("Close",fileName);
+		endif;
 		return 0;
 	end
 }
