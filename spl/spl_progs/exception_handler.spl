@@ -7,6 +7,19 @@ SP = [PROCESS_TABLE+[SYSTEM_STATUS_TABLE+1]*16+11]*512-1;
 backup;
 multipush(EIP);
 
+alias userSP R10;
+userSP = [PROCESS_TABLE+[SYSTEM_STATUS_TABLE+1]*16+13];
+
+if(userSP == (PTLR*512 - 1)) then
+	backup;
+	R1 = EXIT_PROCESS;
+	R2 = [SYSTEM_STATUS_TABLE + 1];
+	call MOD_1;
+	restore;
+
+	call MOD_5;
+endif;
+
 if(EC==1) then
 	backup;
 	print("IllInst");
@@ -14,6 +27,7 @@ if(EC==1) then
 	R2 = [SYSTEM_STATUS_TABLE+1];
 	call MOD_1;
 	restore;
+	
 	call MOD_5;
 endif;
 
@@ -43,16 +57,24 @@ if(EC == 0) then
 	
 	//print "PFault";
 	if((EPN == 2) || (EPN == 3)) then
+		multipush(EC,EIP,EPN,EMA);
+		backup;
 		print "heap";
 		R1 = GET_FREE_PAGE;
 		call MOD_2;
 		[PTBR+4] = R0;
 		[PTBR+5] = "1110";
-		
+		restore;
+		multipop(EC,EIP,EPN,EMA);
+
+		multipush(EC,EIP,EPN,EMA);
+		backup;
 		R1 = GET_FREE_PAGE;
 		call MOD_2;
 		[PTBR+6] = R0;
 		[PTBR+7] = "1110";
+		restore;
+		multipop(EC,EIP,EPN,EMA);
 	endif;
 
 	if((EPN==4) || (EPN==5) || (EPN==6) || (EPN==7)) then
