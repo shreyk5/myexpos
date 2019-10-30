@@ -177,10 +177,10 @@ if(syscall == 24) then
 	endif; 
 
 	// alias UserName R8;
-	// UserName = [[PTBR + 2 * ((userSP - 4) % 512)] * 512 + (userSP - 4) % 512];
+	// UserName = [[PTBR + 2 * ((userSP - 4) / 512)] * 512 + (userSP - 4) % 512];
 
 	// alias password R9;
-	// password = [[PTBR + 2 * ((userSP - 3) % 512)] * 512 + (userSP - 3) % 512];
+	// password = [[PTBR + 2 * ((userSP - 3) / 512)] * 512 + (userSP - 3) % 512];
 	encrypt password;
 	
 	//find username in USER_TABLE	
@@ -234,7 +234,7 @@ endif;
 if(syscall == 25) then
 
 	alias userID R10;
-	userID = [[PTBR + 2 * ((userSP - 4) % 512)] * 512 + (userSP - 4) % 512];
+	userID = [[PTBR + 2 * ((userSP - 4) / 512)] * 512 + (userSP - 4) % 512];
 
 	if(userID<0 || userID >= MAX_USER_NUM || [USER_TABLE + 2*userID] == -1) then
 		[RetAddr] = -1;	
@@ -261,7 +261,7 @@ endif;
 
 if(syscall == 26) then
 	// alias UserName R8;
-	// UserName = [[PTBR + 2 * ((userSP - 4) % 512)] * 512 + (userSP - 4) % 512];
+	// UserName = [[PTBR + 2 * ((userSP - 4) / 512)] * 512 + (userSP - 4) % 512];
 
 	alias i R11;
 	i = 0;

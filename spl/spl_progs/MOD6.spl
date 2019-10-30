@@ -89,6 +89,17 @@ if(func == SWAP_OUT) then
  			continue;
  		endif;
 
+ 		if(i>=8 && i<=14) then
+ 			backup;
+ 			R1 = RELEASE_PAGE;
+ 			R2 = [swap_pageTable + i];
+ 			call MOD_2;
+ 			restore;
+
+ 			[swap_pageTable + i] = -1;
+ 			[swap_pageTable + i + 1] = "0000";
+ 		endif;
+
  		if((i>=16) || ((i<=7) && [MEMORY_FREE_LIST + page] == 1)) then	//check for stack and non shared heap pages
  			alias block R13;
 
