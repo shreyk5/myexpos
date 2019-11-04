@@ -139,6 +139,7 @@ endif;
 //return -1 if file desc is invalid
 //return -2 if offset value moves the file pointer to a position outside the file
 if(syscall == INT_SEEK) then
+	[protable + 9] = INT_SEEK;	//set the mode flag
 	alias fileDesc R8;
 	fileDesc = [[PTBR + 2*((userSP-4)/512)]*512 + (userSP-4)%512];
 

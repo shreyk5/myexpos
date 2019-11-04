@@ -169,7 +169,7 @@ endif;
 
 if(syscall == 24) then
 	
-	if([protable + 3] != 2) then	//if not called from shell
+	if([protable + 1] != 2) then	//if not called from shell
 		[RetAddr] = -1;	
 		[protable + 9] = 0;	//reset the mode flag
 		SP = [protable + 13];

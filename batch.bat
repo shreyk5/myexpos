@@ -53,4 +53,4 @@ load --exec ../expl/samples/m_store.xsm
 load --exec ../expl/samples/m_sort.xsm
 load --exec ../expl/samples/m_merge.xsm
 load --exec ../expl/samples/asg1_s27.xsm
-load --data ../sample.dat
+load --data ../test_num.dat
